@@ -1,0 +1,9 @@
+{
+  "name": "atom-prospects",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "@netlify/blobs": "^8.1.0"
+  }
+}

@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style></style>
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#ffffff;color:#14161c;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-size:14px;}
+  a{color:#2547f4;} a:hover{color:#173099;}
+  .stage{width:100%;max-width:1440px;margin:0 auto;padding:40px 44px;background:#ffffff;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:26px;}
+  .notif-wrap{position:relative;}
+  .bell-btn{position:relative;width:40px;height:40px;border:1px solid #d3d6e0;border-radius:8px;background:#fff;color:#4b4f5a;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .bell-btn:hover{border-color:#b9bdca;color:#14161c;}
+  .bell-count{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .notif-panel{position:absolute;top:48px;right:0;width:360px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #e4e6ec;border-radius:10px;box-shadow:0 16px 40px rgba(20,22,28,0.14);padding:14px;z-index:40;display:flex;flex-direction:column;gap:10px;}
+  .notif-head{display:flex;align-items:center;justify-content:space-between;}
+  .notif-title{font-family:'League Spartan',sans-serif;font-weight:700;font-size:15px;}
+  .notif-link{border:none;background:transparent;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;padding:0;}
+  .notif-sub{font-size:11.5px;color:#8a8e99;}
+  .notif-enable{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;padding:8px 12px;border:1px solid #d3d6e0;border-radius:7px;background:#f5f6f9;color:#14161c;cursor:pointer;text-align:left;}
+  .notif-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto;}
+  .notif-item{padding:10px 11px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;gap:3px;border:1px solid #e4e6ec;}
+  .notif-item:hover{border-color:#b9bdca;}
+  .notif-line{font-size:12.5px;}
+  .notif-text{font-size:12px;color:#4b4f5a;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .notif-date{font-size:11px;color:#8a8e99;}
+  .tag-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .tag-hint{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#8a8e99;}
+  .tag-chip{font-family:'Montserrat',sans-serif;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;border:1px solid #d3d6e0;background:#fff;color:#4b4f5a;cursor:pointer;}
+  .tag-chip:hover{border-color:#2547f4;color:#2547f4;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:min(420px,calc(100% - 28px));background:#14161c;color:#fff;border-radius:10px;padding:12px 14px;font-size:13px;box-shadow:0 16px 40px rgba(20,22,28,0.3);z-index:60;cursor:pointer;}
+  .live{position:fixed;right:16px;bottom:16px;z-index:40;width:min(320px,calc(100% - 32px));background:#fff;border:1px solid #e4e6ec;border-radius:10px;box-shadow:0 8px 24px rgba(20,22,28,0.10);font-family:'Montserrat',sans-serif;}
+  .live-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none;}
+  .live-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
+  .live-title{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#14161c;}
+  .live-count{margin-left:auto;font-size:11px;color:#4b4f5a;}
+  .live-list{border-top:1px solid #e4e6ec;max-height:min(46vh,340px);overflow-y:auto;padding:4px 0;}
+  .live-item{padding:7px 12px;font-size:12px;line-height:1.4;color:#14161c;}
+  .live-item + .live-item{border-top:1px solid #f0f1f4;}
+  .live-meta{font-size:11px;color:#4b4f5a;margin-top:1px;}
+  .live-new{background:#eef1fe;}
+  @media (max-width:600px){ .live{right:12px;left:auto;bottom:12px;width:auto;max-width:calc(100% - 24px);} }
+  .toast-text{font-size:12px;color:#d3d6e0;margin-top:3px;}
+  .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .table-wrap table{min-width:760px;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .tagline{white-space:nowrap;font-weight:700;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8a8e99;padding-left:14px;border-left:1px solid #d3d6e0;}
+  .topbar-actions{display:flex;align-items:center;gap:16px;}
+  .viewer-field{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:12px;color:#8a8e99;font-weight:500;}
+  .viewer-input{width:120px;padding:7px 10px;border:1px solid #d3d6e0;border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12px;color:#14161c;}
+  .btn-primary{font-family:'League Spartan',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.01em;border:none;border-radius:8px;padding:11px 20px;color:#ffffff;cursor:pointer;}
+  .stats-row{display:flex;flex-wrap:wrap;gap:1px;background:#e4e6ec;border:1px solid #e4e6ec;border-radius:10px;overflow:hidden;margin-bottom:22px;}
+  .stat-tile{flex:1 1 110px;min-width:0;background:#ffffff;padding:16px 18px;display:flex;flex-direction:column;gap:4px;}
+  .stat-value{font-family:'League Spartan',sans-serif;font-weight:700;font-size:26px;}
+  .stat-label{font-size:10.5px;font-weight:600;color:#8a8e99;text-transform:uppercase;letter-spacing:0.08em;}
+  .controls-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:22px;}
+  .search-input{flex:1 1 260px;padding:9px 12px;border:1px solid #d3d6e0;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;color:#14161c;}
+  .filter-select{padding:9px 12px;border:1px solid #d3d6e0;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;color:#4b4f5a;min-width:132px;background:#fff;}
+  .view-toggle{display:flex;flex-shrink:0;border:1px solid #d3d6e0;border-radius:999px;overflow:hidden;margin-left:auto;}
+  .toggle-btn{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12.5px;padding:8px 18px;border:none;background:#fff;color:#8a8e99;cursor:pointer;}
+  .kanban{display:flex;gap:14px;align-items:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;}
+  .col{flex:0 0 210px;background:#f5f6f9;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:200px;}
+  .col-head{display:flex;align-items:baseline;justify-content:space-between;}
+  .col-head-right{display:flex;align-items:center;gap:6px;}
+  .col-title{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#14161c;}
+  .col-count{font-size:12px;color:#8a8e99;font-weight:600;}
+  .col-remove{border:none;background:transparent;color:#8a8e99;font-size:14px;cursor:pointer;line-height:1;padding:0;}
+  .col-remove:hover{color:#a63244;}
+  .col-move{border:1px solid #d3d6e0;background:#fff;color:#4b4f5a;font-size:12px;cursor:pointer;line-height:1;width:24px;height:22px;border-radius:5px;padding:0;display:inline-flex;align-items:center;justify-content:center;}
+  .col-move:hover:not(:disabled){border-color:#2547f4;color:#2547f4;}
+  .col-move:disabled{opacity:0.35;cursor:default;}
+  .col-tools{display:flex;align-items:center;gap:4px;}
+  .col-rename{flex:1;min-width:0;font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 6px;border:1.5px solid #2547f4;border-radius:5px;outline:none;background:#fff;}
+  .add-col{background:transparent;border:1.5px dashed #d3d6e0;justify-content:flex-start;gap:8px;}
+  .add-col-input{padding:8px 10px;border:1px solid #d3d6e0;border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12.5px;}
+  .add-col-btn{border:none;background:transparent;font-family:'League Spartan',sans-serif;font-weight:600;font-size:12.5px;text-align:left;cursor:pointer;padding:0;}
+  .card{background:#ffffff;border:1px solid #e4e6ec;border-radius:9px;padding:12px 13px;display:flex;flex-direction:column;gap:8px;cursor:pointer;}
+  .card:hover{border-color:#b9bdca;}
+  .card.stalled{box-shadow:inset 3px 0 0 #14161c;}
+  .card-top{display:flex;align-items:center;gap:7px;}
+  .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;display:inline-block;}
+  .card-brand{font-family:'League Spartan',sans-serif;font-weight:600;font-size:13.5px;color:#14161c;}
+  .card-meta{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{font-size:11px;font-weight:500;padding:3px 8px;border-radius:999px;background:#f5f6f9;color:#4b4f5a;}
+  .chip-value{background:#e9edff;color:#2547f4;font-weight:600;}
+  .card-foot{display:flex;align-items:center;gap:9px;font-size:11px;color:#8a8e99;font-weight:500;}
+  .card-foot .stale{color:#14161c;font-weight:600;}
+  .empty{color:#8a8e99;font-size:12px;padding:8px 2px;}
+  table{width:100%;border-collapse:collapse;border:1px solid #e4e6ec;border-radius:10px;overflow:hidden;}
+  th{text-align:left;font-family:'League Spartan',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8a8e99;padding:13px 16px;border-bottom:1px solid #e4e6ec;background:#f5f6f9;}
+  td{padding:12px 16px;border-bottom:1px solid #e4e6ec;font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  tr.row{cursor:pointer;}
+  tr.row:hover td{background:#fafbfd;}
+  .brand-cell{font-weight:600;}
+  .badge{font-family:'League Spartan',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px;display:inline-block;}
+  .num{color:#4b4f5a;}
+  .cap{text-transform:capitalize;color:#4b4f5a;}
+  .stale{color:#14161c;font-weight:600;}
+
+  .scrim{position:fixed;inset:0;background:rgba(20,22,28,0.35);z-index:50;display:flex;}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:100%;box-sizing:border-box;background:#ffffff;box-shadow:-8px 0 32px rgba(20,22,28,0.14);padding:28px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;z-index:51;}
+  .drawer-head{display:flex;align-items:flex-start;justify-content:space-between;}
+  .drawer-brand{font-family:'League Spartan',sans-serif;font-weight:700;font-size:22px;margin:0;}
+  .drawer-sub{font-size:11.5px;color:#8a8e99;margin:5px 0 0;}
+  .icon-btn{width:30px;height:30px;border:1px solid #d3d6e0;border-radius:7px;background:#fff;color:#8a8e99;font-size:16px;line-height:1;cursor:pointer;}
+  .stage-track{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{font-family:'League Spartan',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid #d3d6e0;background:#fff;color:#4b4f5a;cursor:pointer;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#8a8e99;}
+  .field-input{padding:8px 10px;border:1px solid #d3d6e0;border-radius:7px;font-family:'Montserrat',sans-serif;font-size:13px;color:#14161c;}
+  .btn-secondary{align-self:flex-start;font-family:'League Spartan',sans-serif;font-weight:600;font-size:12.5px;padding:9px 16px;border:1px solid #d3d6e0;border-radius:7px;background:#fff;color:#14161c;cursor:pointer;}
+  .section{border-top:1px solid #e4e6ec;padding-top:18px;display:flex;flex-direction:column;gap:12px;}
+  .section-title{font-family:'League Spartan',sans-serif;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#8a8e99;margin:0;}
+  .doc-item{display:flex;align-items:center;gap:8px;font-size:12.5px;background:#f5f6f9;border-radius:7px;padding:8px 10px;}
+  .doc-type{font-family:'League Spartan',sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;color:#2547f4;background:#e9edff;padding:2px 8px;border-radius:5px;}
+  .doc-name{font-weight:600;}
+  .doc-note{color:#8a8e99;margin-left:auto;}
+  .comment{border-bottom:1px solid #e4e6ec;padding-bottom:10px;}
+  .comment:last-child{border-bottom:none;padding-bottom:0;}
+  .comment-head{display:flex;justify-content:space-between;font-size:11.5px;color:#8a8e99;margin-bottom:3px;}
+  .comment-author{font-weight:600;color:#4b4f5a;}
+  .comment-text{font-size:13px;margin:0;}
+  .comment.system .comment-text{font-style:italic;color:#8a8e99;}
+  .footer-remove{font-family:'Montserrat',sans-serif;font-size:12px;color:#8a8e99;border-top:1px solid #e4e6ec;padding-top:16px;cursor:pointer;}
+  .footer-remove:hover{color:#a63244;}
+  .post-row{display:flex;gap:8px;}
+  .post-input{flex:1;padding:8px 10px;border:1px solid #d3d6e0;border-radius:7px;font-family:'Montserrat',sans-serif;font-size:12.5px;}
+  .post-btn{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;padding:8px 14px;border:none;border-radius:7px;color:#fff;cursor:pointer;}
+
+  .modal{width:min(640px,calc(100% - 32px));max-height:86vh;overflow-y:auto;background:#ffffff;border-radius:12px;box-shadow:0 24px 64px rgba(20,22,28,0.24);padding:28px;margin:auto;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .modal-title{font-family:'League Spartan',sans-serif;font-weight:700;font-size:21px;margin:0;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+  .btn-ghost{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12.5px;padding:10px 16px;border:none;background:transparent;color:#8a8e99;cursor:pointer;}
+  .topbar-btn{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12.5px;padding:10px 14px;border:1px solid #d3d6e0;border-radius:8px;background:#fff;color:#14161c;cursor:pointer;white-space:nowrap;}
+  .topbar-btn:hover{border-color:#b9bdca;}
+  .field-wide{grid-column:1 / -1;}
+  .field-textarea{resize:vertical;min-height:58px;line-height:1.45;}
+  .field-input:disabled{background:#f5f6f9;color:#4b4f5a;opacity:1;}
+  .pill:disabled{cursor:default;}
+  .card-brief{font-size:12px;color:#4b4f5a;line-height:1.4;margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .chip-cat{font-weight:600;}
+  .card-milestone{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#4b4f5a;line-height:1.35;}
+  .card-milestone b{font-weight:600;color:#14161c;white-space:nowrap;}
+  .ms-due{font-weight:700;color:#14161c;}
+  .ms-soon{color:#a35a00;font-weight:700;}
+  .ms-late{color:#a63244;font-weight:700;}
+  .deliv-item{display:flex;align-items:center;gap:10px;font-size:13px;padding:4px 0;}
+  .deliv-item input{width:18px;height:18px;flex:0 0 auto;accent-color:#2547f4;}
+  .deliv-done{text-decoration:line-through;color:#8a8e99;}
+  .row-remove{margin-left:auto;border:none;background:transparent;color:#8a8e99;cursor:pointer;font-size:15px;line-height:1;padding:4px 6px;}
+  .row-remove:hover{color:#a63244;}
+  .doc-name{color:#14161c;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  a.doc-name[href]:hover{color:#2547f4;text-decoration:underline;}
+  .doc-form{display:grid;grid-template-columns:130px minmax(0,1fr);gap:8px;}
+  .doc-form .full{grid-column:1 / -1;}
+  .file-pick{display:flex;align-items:center;justify-content:center;padding:10px;border:1.5px dashed #d3d6e0;border-radius:7px;font-size:12.5px;color:#4b4f5a;cursor:pointer;text-align:center;}
+  .file-pick:hover{border-color:#2547f4;color:#2547f4;}
+  .err{font-size:12px;color:#a63244;}
+  .lock-note{font-size:12px;color:#4b4f5a;background:#f5f6f9;border-radius:7px;padding:10px 12px;line-height:1.45;}
+  .check-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#4b4f5a;cursor:pointer;}
+  .check-row input{width:16px;height:16px;accent-color:#2547f4;}
+  .assign-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .assign-row .tag-chip:disabled{cursor:default;}
+  .assign-new{flex:1 1 120px;min-width:0;padding:5px 10px;font-size:12px;border-radius:999px;}
+  .save-bar{position:fixed;right:0;bottom:0;width:100%;box-sizing:border-box;padding:12px max(28px, calc((100% - 1040px) / 2)) calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e4e6ec;box-shadow:0 -6px 18px rgba(20,22,28,0.06);display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:52;}
+  .drawer{padding:32px max(28px, calc((100% - 1040px) / 2)) 110px !important;}
+  .drawer .form-grid{grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));}
+  .drawer-brand{font-size:28px;}
+  [class*="netlify-badge"],[id*="netlify-badge"],a[href*="netlify.com"][target="_blank"],iframe[src*="netlify"]{display:none !important;visibility:hidden !important;}
+  .save-state{font-size:12.5px;color:#4b4f5a;}
+  .save-state.dirty{color:#a35a00;font-weight:600;}
+  .save-btn{font-family:'League Spartan',sans-serif;font-weight:600;font-size:13px;padding:11px 22px;border:none;border-radius:8px;color:#fff;cursor:pointer;}
+  .save-btn:disabled{background:#d3d6e0 !important;color:#4b4f5a;cursor:default;}
+  .mini-save{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;padding:9px 14px;border:none;border-radius:7px;color:#fff;cursor:pointer;white-space:nowrap;}
+  .mini-save:disabled{background:#eef0f4 !important;color:#4b4f5a;cursor:default;}
+  .row-edit{border:none;background:transparent;color:#4b4f5a;font-family:'Montserrat',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;padding:4px 6px;border-radius:5px;}
+  .row-edit:hover{color:#2547f4;background:#eef1fe;}
+  .deliv-edit{flex:1;min-width:0;font:inherit;font-size:13px;border:1px solid transparent;border-radius:5px;padding:4px 6px;background:transparent;color:#14161c;}
+  .deliv-edit:hover{border-color:#e4e6ec;}
+  .deliv-edit:focus{outline:none;border-color:#2547f4;background:#fff;}
+  .deliv-edit.deliv-done{text-decoration:line-through;color:#8a8e99;}
+  .edit-box{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .edit-actions{display:flex;gap:8px;justify-content:flex-end;}
+  .mg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .mg-tabs .tag-chip{white-space:nowrap;flex-shrink:0;padding:6px 12px;}
+  .team-list{display:flex;flex-direction:column;}
+  .team-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #e4e6ec;}
+  .team-name{flex:1 1 140px;font-weight:600;font-size:13px;}
+  .team-you{font-weight:500;color:#8a8e99;font-size:11.5px;}
+  .team-email{flex:2 1 200px;}
+  .team-add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:8px;margin-top:16px;}
+  @media (max-width:900px){
+    .stage{padding:24px 20px;}
+    .controls-row{flex-wrap:wrap;}
+    .search-input{flex:1 1 100%;}
+    .filter-select{flex:1 1 30%;min-width:0;}
+    .view-toggle{margin-left:0;}
+  }
+  @media (max-width:600px){
+    body{font-size:15px;}
+    .stage{padding:18px 14px;}
+    .topbar{margin-bottom:18px;}
+    .topbar-actions{width:100%;justify-content:space-between;}
+    .viewer-input{width:100px;}
+    .btn-primary{padding:12px 16px;min-height:44px;}
+    .stat-tile{flex-basis:40%;padding:12px 14px;}
+    .stat-value{font-size:22px;}
+    .filter-select{flex:1 1 100%;min-height:44px;}
+    .search-input{min-height:44px;font-size:16px;}
+    .view-toggle{width:100%;}
+    .toggle-btn{flex:1;min-height:44px;}
+    .kanban{scroll-snap-type:x mandatory;margin:0 -14px;padding:0 14px 8px;}
+    .col{flex:0 0 82%;scroll-snap-align:start;}
+    .drawer{width:100% !important;padding:20px 16px 110px !important;}
+    .save-bar{padding:10px 16px calc(10px + env(safe-area-inset-bottom));}
+    .modal{width:100% !important;max-height:100% !important;height:100%;border-radius:0 !important;padding:20px 16px !important;}
+    .form-grid{grid-template-columns:1fr !important;}
+    .field-input,.post-input,.add-col-input{font-size:16px !important;min-height:44px;}
+    .pill{padding:10px 14px !important;}
+    .icon-btn{width:44px !important;height:44px !important;}
+    .post-btn,.btn-secondary,.btn-ghost{min-height:44px;}
+    .modal-actions{position:sticky;bottom:-20px;background:#fff;padding:12px 0;margin-bottom:-20px;}
+  }
+  @media (max-width:600px){
+    .brand img{height:22px !important;}
+    .tagline{font-size:10px;padding-left:10px;}
+    .topbar-actions{flex-wrap:wrap;gap:10px;}
+    .viewer-field{flex:1 1 auto;}
+    .viewer-input{flex:1;width:auto;min-width:0;min-height:40px;font-size:16px;}
+    .bell-btn{width:44px;height:44px;}
+    .btn-primary{flex:1 1 100%;}
+    .notif-panel{position:fixed;top:72px;left:12px;right:12px;width:auto;max-width:none;}
+    .kanban{display:flex;overflow-x:auto;}
+    .col-remove,.add-col-btn{min-height:40px;}
+    .post-row{flex-wrap:wrap;}
+    .post-input{flex:1 1 100%;}
+    .post-btn{flex:1 1 100%;}
+    .tag-chip{padding:8px 12px;}
+    .topbar-btn{min-height:44px;flex:1 1 auto;}
+    .doc-form{grid-template-columns:1fr;}
+    .team-add{grid-template-columns:1fr;}
+    .deliv-item input,.check-row input{width:22px;height:22px;}
+  }
+</style>
+</helmet>
+<div class="stage">
+  <div class="topbar">
+    <div class="brand">
+      <img src="assets/atom-logo.png" alt="a-tom." style="height:26px;width:auto;display:block;">
+      <span class="tagline">Work in Prospects</span>
+    </div>
+    <div class="topbar-actions">
+      <sc-if value="{{gmailEnabled}}" hint-placeholder-val="{{false}}">
+        <button class="topbar-btn" style="{{gmailBtnStyle}}" onClick="{{gmailClick}}" title="{{gmailTitle}}">{{gmailLabel}}</button>
+      </sc-if>
+      <button class="topbar-btn" onClick="{{openTeam}}">Team</button>
+      <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}"><button class="topbar-btn" onClick="{{openMg}}">Manage</button></sc-if>
+      <button class="topbar-btn" style="{{masterBtnStyle}}" onClick="{{toggleMaster}}">{{masterLabel}}</button>
+      <div class="notif-wrap">
+        <button class="bell-btn" onClick="{{toggleNotifs}}" aria-label="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+          <sc-if value="{{hasUnread}}" hint-placeholder-val="{{false}}"><span class="bell-count" style="background:{{accent}}">{{unreadCount}}</span></sc-if>
+        </button>
+        <sc-if value="{{notifsOpen}}" hint-placeholder-val="{{false}}">
+          <div class="notif-panel">
+            <div class="notif-head">
+              <span class="notif-title">Notifications</span>
+              <button class="notif-link" style="color:{{accent}}" onClick="{{markAllRead}}">Mark all read</button>
+            </div>
+            <div class="notif-sub">Showing alerts for <strong>{{viewerName}}</strong></div>
+            <sc-if value="{{canEnableAlerts}}" hint-placeholder-val="{{false}}">
+              <button class="notif-enable" onClick="{{enableAlerts}}">Turn on desktop alerts</button>
+            </sc-if>
+            <div class="notif-list">
+              <sc-for list="{{myNotifs}}" as="n" hint-placeholder-count="0">
+                <div class="notif-item" style="{{n.style}}" onClick="{{n.open}}">
+                  <div class="notif-line"><strong>{{n.from}}</strong> {{n.verb}} <strong>{{n.prospectBrand}}</strong></div>
+                  <div class="notif-text">{{n.text}}</div>
+                  <div class="notif-date">{{n.when}}</div>
+                </div>
+              </sc-for>
+              <sc-if value="{{noNotifs}}" hint-placeholder-val="{{false}}">
+                <div class="empty">Nothing yet. You'll be notified here when someone tags you with @{{viewerFirst}} or assigns you a prospect.</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <div class="viewer-field">Posting as <input class="viewer-input" value="{{viewerName}}" onChange="{{setViewerName}}" onBlur="{{registerViewer}}"></div>
+      <button class="btn-primary" style="background:{{accent}}" onClick="{{openAdd}}">+ Add prospect</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-tile"><span class="stat-value">{{stats.total}}</span><span class="stat-label">Total prospects</span></div>
+    <div class="stat-tile"><span class="stat-value">{{stats.active}}</span><span class="stat-label">Active</span></div>
+    <div class="stat-tile"><span class="stat-value">{{stats.won}}</span><span class="stat-label">Won</span></div>
+    <div class="stat-tile"><span class="stat-value">{{stats.lost}}</span><span class="stat-label">Lost</span></div>
+    <div class="stat-tile"><span class="stat-value">{{stats.parked}}</span><span class="stat-label">Postponed</span></div>
+    <div class="stat-tile" title="Won ÷ (Won + Lost) · {{stats.winRateNote}}. Postponed and active deals aren't counted."><span class="stat-value">{{stats.winRate}}</span><span class="stat-label">Win rate</span></div>
+    <div class="stat-tile"><span class="stat-value">{{stats.stalled}}</span><span class="stat-label">Stalled</span></div>
+  </div>
+
+  <div class="controls-row">
+    <input class="search-input" placeholder="Search brand or contact…" value="{{search}}" onChange="{{setSearch}}">
+    <select class="filter-select" value="{{filterCategory}}" onChange="{{setFilterCategory}}">
+      <option value="">All categories</option>
+      <sc-for list="{{categories}}" as="c" hint-placeholder-count="4">
+        <option value="{{c}}">{{c}}</option>
+      </sc-for>
+    </select>
+    <select class="filter-select" value="{{filterAssignee}}" onChange="{{setFilterAssignee}}">
+      <option value="">All assignees</option>
+      <sc-for list="{{assigneeOptions}}" as="a" hint-placeholder-count="3">
+        <option value="{{a}}">{{a}}</option>
+      </sc-for>
+    </select>
+    <select class="filter-select" value="{{filterPriority}}" onChange="{{setFilterPriority}}">
+      <option value="">All priorities</option>
+      <sc-for list="{{priorities}}" as="pr" hint-placeholder-count="3">
+        <option value="{{pr}}">{{pr}}</option>
+      </sc-for>
+    </select>
+    <select class="filter-select" value="{{filterTag}}" onChange="{{setFilterTag}}">
+      <option value="">All tags</option>
+      <sc-for list="{{tagOptions}}" as="t" hint-placeholder-count="3">
+        <option value="{{t}}">{{t}}</option>
+      </sc-for>
+    </select>
+    <div class="view-toggle">
+      <button class="toggle-btn" style="{{boardToggleStyle}}" onClick="{{setViewBoard}}">Board</button>
+      <button class="toggle-btn" style="{{tableToggleStyle}}" onClick="{{setViewTable}}">Table</button>
+    </div>
+  </div>
+
+  <sc-if value="{{hasHidden}}" hint-placeholder-val="{{false}}">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 12px;padding:10px 14px;border-radius:8px;background:#fff7e8;border:1px solid #f0d9a8;font-size:13px;color:#14161c;">
+      <span>Showing <strong>{{shownCount}}</strong> of {{totalCount}} prospects — {{hiddenCount}} hidden by filters ({{activeFilters}}).</span>
+      <button class="btn-ghost" style="padding:6px 12px;" onClick="{{clearFilters}}">Show all</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isBoard}}" hint-placeholder-val="{{true}}">
+    <div class="kanban">
+      <sc-for list="{{columns}}" as="col" hint-placeholder-count="6">
+        <div class="col" data-stage="{{col.name}}" style="{{col.colStyle}}" onDragOver="{{col.onDragOver}}" onDrop="{{col.onDrop}}">
+          <div class="col-head" style="gap:8px;" draggable="{{col.draggable}}" onDragStart="{{col.onDragStart}}" onDragEnd="{{col.onDragEnd}}" onTouchStart="{{col.onTouchStart}}" onTouchEnd="{{col.cancelPress}}" onContextMenu="{{col.onContextMenu}}">
+            <sc-if value="{{col.isEditing}}" hint-placeholder-val="{{false}}">
+              <input class="col-rename" value="{{stageRenameText}}" onChange="{{setStageRenameText}}" onKeyDown="{{col.renameKey}}" onBlur="{{col.commitRename}}" autoFocus="{{true}}">
+            </sc-if>
+            <sc-if value="{{col.notEditing}}" hint-placeholder-val="{{true}}">
+              <span class="col-title" onDoubleClick="{{col.startRename}}" title="{{col.renameHint}}" style="{{col.titleStyle}}">{{col.name}}</span>
+            </sc-if>
+            <span class="col-head-right">
+              <span class="col-count">{{col.count}}</span>
+              <sc-if value="{{col.canRemove}}" hint-placeholder-val="{{false}}">
+                <button class="col-remove" onClick="{{col.remove}}" title="Remove empty stage">×</button>
+              </sc-if>
+            </span>
+          </div>
+          <sc-for list="{{col.items}}" as="p" hint-placeholder-count="1">
+            <div class="{{p.cardClass}}" style="{{p.cardStyle}}" onClick="{{p.open}}">
+              <div class="card-top"><span class="dot" style="{{p.dotStyle}}"></span><span class="card-brand">{{p.brand}}</span></div>
+              <sc-if value="{{p.hasBrief}}" hint-placeholder-val="{{false}}"><p class="card-brief">{{p.brief}}</p></sc-if>
+              <sc-if value="{{p.hasMilestone}}" hint-placeholder-val="{{false}}"><div class="card-milestone"><b class="{{p.msClass}}">{{p.msDateLabel}}</b><span>{{p.nextMilestone}}</span></div></sc-if>
+              <div class="card-meta"><sc-if value="{{p.hasCategory}}" hint-placeholder-val="{{false}}"><span class="chip chip-cat" style="{{p.catStyle}}">{{p.category}}</span></sc-if><span class="chip">{{p.assignee}}</span><span class="chip chip-value">{{p.valueDisplay}}</span></div>
+              <div class="card-foot"><span>{{p.docsLabel}}</span><span>{{p.updatesLabel}}</span><span class="{{p.staleClass}}">{{p.lastUpdateLabel}}</span></div>
+            </div>
+          </sc-for>
+          <sc-if value="{{col.isEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No prospects here.</div></sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}">
+      <div class="col add-col">
+        <span class="col-title">Add stage</span>
+        <input class="add-col-input" placeholder="Stage name" value="{{newStageName}}" onChange="{{setNewStageName}}">
+        <button class="add-col-btn" style="color:{{accent}}" onClick="{{addStage}}">+ Add</button>
+      </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isTable}}" hint-placeholder-val="{{false}}">
+    <div class="table-wrap"><table>
+      <thead>
+        <tr><th>Brand</th><th>Category</th><th>State</th><th>Assigned</th><th>Priority</th><th>Docs</th><th>Updates</th><th>Last update</th></tr>
+      </thead>
+      <tbody>
+        <sc-for list="{{filteredList}}" as="p" hint-placeholder-count="6">
+          <tr class="row" style="{{p.rowStyle}}" onClick="{{p.open}}">
+            <td class="brand-cell"><span class="dot" style="{{p.dotStyle}}"></span>{{p.brand}}</td>
+            <td>{{p.category}}</td>
+            <td><span class="badge" style="{{p.badgeStyle}}">{{p.stage}}</span></td>
+            <td>{{p.assignee}}</td>
+            <td class="cap">{{p.priority}}</td>
+            <td class="num">{{p.docs.length}}</td>
+            <td class="num">{{p.updates.length}}</td>
+            <td class="{{p.staleClass}}">{{p.lastUpdateLabel}}</td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table></div>
+  </sc-if>
+</div>
+
+<sc-if value="{{drawerOpen}}" hint-placeholder-val="{{false}}">
+  <div class="scrim">
+    <div class="drawer">
+      <div class="drawer-head">
+        <div>
+          <h2 class="drawer-brand">{{selected.brand}}</h2>
+          <p class="drawer-sub">Added {{selected.added}} · Updated {{selected.lastUpdateLabel}}</p>
+        </div>
+        <button class="icon-btn" onClick="{{closeDrawerSafe}}" aria-label="Close">×</button>
+      </div>
+      <sc-if value="{{selected.locked}}" hint-placeholder-val="{{false}}">
+        <div class="lock-note">View only. {{selected.ownerLabel}} or a master can edit this prospect. You can still add docs and post updates.</div>
+      </sc-if>
+
+      <div class="stage-track">
+        <sc-for list="{{selected.pills}}" as="pl" hint-placeholder-count="6">
+          <button class="pill" style="{{pl.style}}" onClick="{{pl.onClick}}" disabled="{{pl.disabled}}">{{pl.name}}</button>
+        </sc-for>
+      </div>
+
+      <div class="form-grid">
+        <div class="field"><span class="field-label">Brand name</span><input class="field-input" value="{{selected.brand}}" onChange="{{selected.onBrand}}" disabled="{{selected.locked}}"></div>
+        <div class="field"><span class="field-label">Category</span><select class="field-input" value="{{selected.category}}" onChange="{{selected.onCategory}}" disabled="{{selected.locked}}"><option value="">Choose…</option><sc-for list="{{categories}}" as="c" hint-placeholder-count="4"><option value="{{c}}">{{c}}</option></sc-for></select></div>
+        <div class="field field-wide"><span class="field-label">Brief · 2 lines</span><textarea class="field-input field-textarea" rows="2" maxLength="220" placeholder="What the brand wants, in two lines" value="{{selected.brief}}" onChange="{{selected.onBrief}}" disabled="{{selected.locked}}"></textarea></div>
+        <div class="field"><span class="field-label">Next milestone</span><input class="field-input" placeholder="e.g. Pitch presentation" value="{{selected.nextMilestone}}" onChange="{{selected.onNextMilestone}}" disabled="{{selected.locked}}"></div>
+        <div class="field"><span class="field-label">Milestone date · {{selected.msHint}}</span><input class="field-input" type="date" value="{{selected.milestoneDate}}" onChange="{{selected.onMilestoneDate}}" disabled="{{selected.locked}}"></div>
+        <div class="field field-wide"><span class="field-label">Assigned to · pick one or more</span><div class="assign-row"><sc-for list="{{selected.assignChips}}" as="a" hint-placeholder-count="3"><button class="tag-chip" style="{{a.style}}" onClick="{{a.toggle}}" disabled="{{a.disabled}}">{{a.name}}</button></sc-for><sc-if value="{{selected.canEdit}}" hint-placeholder-val="{{false}}"><input class="field-input assign-new" placeholder="+ add name, Enter" value="{{assignNewText}}" onChange="{{setAssignNewText}}" onKeyDown="{{selected.assignNewKey}}"></sc-if></div></div>
+        <div class="field"><span class="field-label">Priority</span><select class="field-input" value="{{selected.priority}}" onChange="{{selected.onPriority}}" disabled="{{selected.locked}}"><option value="">None</option><sc-for list="{{priorities}}" as="pr" hint-placeholder-count="3"><option value="{{pr}}">{{pr}}</option></sc-for></select></div>
+        <div class="field"><span class="field-label">Deal value (₹)</span><input class="field-input" value="{{selected.value}}" onChange="{{selected.onValue}}" disabled="{{selected.locked}}"></div>
+        <div class="field"><span class="field-label">Source</span><input class="field-input" value="{{selected.source}}" onChange="{{selected.onSource}}" disabled="{{selected.locked}}"></div>
+        <div class="field"><span class="field-label">Contact person</span><input class="field-input" value="{{selected.contactPerson}}" onChange="{{selected.onContactPerson}}" disabled="{{selected.locked}}"></div>
+        <div class="field"><span class="field-label">Contact email</span><input class="field-input" value="{{selected.contactEmail}}" onChange="{{selected.onContactEmail}}" disabled="{{selected.locked}}"></div>
+        <div class="field"><span class="field-label">Tags</span><input class="field-input" value="{{selected.tags}}" onChange="{{selected.onTags}}" disabled="{{selected.locked}}"></div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Scope &amp; deliverables</h3>
+        <div class="field"><span class="field-label">Scope</span><textarea class="field-input field-textarea" rows="3" placeholder="What's in and out of this engagement" value="{{selected.scope}}" onChange="{{selected.onScope}}" disabled="{{selected.locked}}"></textarea></div>
+        <span class="field-label">Deliverables · {{selected.delivProgress}}</span>
+        <sc-for list="{{selected.deliverables}}" as="dl" hint-placeholder-count="0">
+          <div class="deliv-item">
+            <input type="checkbox" checked="{{dl.done}}" onChange="{{dl.toggle}}" disabled="{{dl.locked}}">
+            <sc-if value="{{dl.canRemove}}" hint-placeholder-val="{{false}}"><input class="deliv-edit {{dl.textClass}}" value="{{dl.value}}" onChange="{{dl.onText}}" onBlur="{{dl.commit}}" onKeyDown="{{dl.onKey}}"></sc-if>
+            <sc-if value="{{dl.locked}}" hint-placeholder-val="{{false}}"><span class="{{dl.textClass}}">{{dl.text}}</span></sc-if>
+            <sc-if value="{{dl.canRemove}}" hint-placeholder-val="{{false}}"><button class="row-remove" onClick="{{dl.remove}}" aria-label="Remove">×</button></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{selected.canEdit}}" hint-placeholder-val="{{false}}">
+          <div class="post-row">
+            <input class="post-input" placeholder="Add a deliverable, e.g. 3 reels + 1 film" value="{{newDeliverable}}" onChange="{{setNewDeliverable}}" onKeyDown="{{deliverableKey}}">
+            <button class="post-btn" style="background:{{accent}}" onClick="{{addDeliverable}}">Add</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Brief docs</h3>
+        <sc-for list="{{selected.briefDocs}}" as="d" hint-placeholder-count="0">
+          <div class="doc-item">
+            <sc-if value="{{d.notEditing}}" hint-placeholder-val="{{true}}"><span class="doc-type">{{d.type}}</span><a class="doc-name" href="{{d.href}}" target="_blank" rel="noopener">{{d.name}}</a><span class="doc-note">{{d.note}}</span><sc-if value="{{d.canRemove}}" hint-placeholder-val="{{false}}"><button class="row-edit" onClick="{{d.edit}}">Edit</button><button class="row-remove" style="margin-left:0" onClick="{{d.remove}}" aria-label="Remove">×</button></sc-if></sc-if>
+            <sc-if value="{{d.isEditing}}" hint-placeholder-val="{{false}}"><div class="edit-box">
+              <div class="doc-form"><select class="field-input" value="{{docEdit.type}}" onChange="{{setDocEditType}}"><sc-for list="{{docTypes}}" as="t" hint-placeholder-count="5"><option value="{{t}}">{{t}}</option></sc-for></select><input class="field-input" placeholder="Document name" value="{{docEdit.name}}" onChange="{{setDocEditName}}"><input class="field-input full" placeholder="Link" value="{{docEdit.url}}" onChange="{{setDocEditUrl}}"></div>
+              <div class="edit-actions"><button class="btn-ghost" onClick="{{cancelDocEdit}}">Cancel</button><button class="mini-save" style="background:{{accent}}" onClick="{{saveDocEdit}}">Save</button></div>
+            </div></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{selected.briefDocsEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No brief docs yet. Add one below with type "Brief".</div></sc-if>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Documents</h3>
+        <sc-for list="{{selected.otherDocs}}" as="d" hint-placeholder-count="0">
+          <div class="doc-item">
+            <sc-if value="{{d.notEditing}}" hint-placeholder-val="{{true}}"><span class="doc-type">{{d.type}}</span><a class="doc-name" href="{{d.href}}" target="_blank" rel="noopener">{{d.name}}</a><span class="doc-note">{{d.note}}</span><sc-if value="{{d.canRemove}}" hint-placeholder-val="{{false}}"><button class="row-edit" onClick="{{d.edit}}">Edit</button><button class="row-remove" style="margin-left:0" onClick="{{d.remove}}" aria-label="Remove">×</button></sc-if></sc-if>
+            <sc-if value="{{d.isEditing}}" hint-placeholder-val="{{false}}"><div class="edit-box">
+              <div class="doc-form"><select class="field-input" value="{{docEdit.type}}" onChange="{{setDocEditType}}"><sc-for list="{{docTypes}}" as="t" hint-placeholder-count="5"><option value="{{t}}">{{t}}</option></sc-for></select><input class="field-input" placeholder="Document name" value="{{docEdit.name}}" onChange="{{setDocEditName}}"><input class="field-input full" placeholder="Link" value="{{docEdit.url}}" onChange="{{setDocEditUrl}}"></div>
+              <div class="edit-actions"><button class="btn-ghost" onClick="{{cancelDocEdit}}">Cancel</button><button class="mini-save" style="background:{{accent}}" onClick="{{saveDocEdit}}">Save</button></div>
+            </div></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{selected.otherDocsEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No documents yet.</div></sc-if>
+        <div class="doc-form">
+          <select class="field-input" value="{{docDraft.type}}" onChange="{{setDocType}}"><sc-for list="{{docTypes}}" as="t" hint-placeholder-count="5"><option value="{{t}}">{{t}}</option></sc-for></select>
+          <input class="field-input" placeholder="Document name" value="{{docDraft.name}}" onChange="{{setDocName}}">
+          <input class="field-input full" placeholder="Paste a link (Drive, Dropbox, Figma…)" value="{{docDraft.url}}" onChange="{{setDocUrl}}">
+          <label class="file-pick full"><input type="file" onChange="{{onDocFile}}" style="display:none"><span>{{docFileLabel}}</span></label>
+          <sc-if value="{{hasDocError}}" hint-placeholder-val="{{false}}"><div class="err full">{{docError}}</div></sc-if>
+          <button class="post-btn full" style="background:{{accent}}" onClick="{{addDoc}}">{{docBtnLabel}}</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Updates</h3>
+        <sc-for list="{{selected.updates}}" as="u" hint-placeholder-count="0">
+          <div class="{{u.className}}">
+            <div class="comment-head"><span class="comment-author">{{u.author}}</span><span style="display:flex;align-items:center;gap:4px;">{{u.dateLabel}}<sc-if value="{{u.canEdit}}" hint-placeholder-val="{{false}}"><button class="row-edit" onClick="{{u.edit}}">Edit</button><button class="row-remove" style="margin-left:0" onClick="{{u.remove}}" aria-label="Delete">×</button></sc-if></span></div>
+            <sc-if value="{{u.notEditing}}" hint-placeholder-val="{{true}}"><p class="comment-text">{{u.text}}</p></sc-if>
+            <sc-if value="{{u.isEditing}}" hint-placeholder-val="{{false}}"><div class="edit-box"><textarea class="field-input field-textarea" rows="2" value="{{updEditText}}" onChange="{{setUpdEditText}}"></textarea><div class="edit-actions"><button class="btn-ghost" onClick="{{cancelUpdEdit}}">Cancel</button><button class="mini-save" style="background:{{accent}}" onClick="{{saveUpdEdit}}">Save</button></div></div></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{selected.updatesEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No updates yet.</div></sc-if>
+        <div class="post-row">
+          <input class="post-input" placeholder="Post an update… use @name to tag" value="{{newUpdateText}}" onChange="{{setNewUpdateText}}">
+          <button class="post-btn" style="background:{{accent}}" onClick="{{postUpdate}}">Post</button>
+        </div>
+        <div class="tag-row">
+          <span class="tag-hint">Tag</span>
+          <sc-for list="{{mentionPeople}}" as="m" hint-placeholder-count="3">
+            <button class="tag-chip" onClick="{{m.add}}">@{{m.name}}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{emailEnabled}}" hint-placeholder-val="{{false}}">
+          <label class="check-row"><input type="checkbox" checked="{{emailTagged}}" onChange="{{toggleEmailTagged}}"><span>Email tagged people</span></label>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{selected.canDelete}}" hint-placeholder-val="{{false}}">
+        <div class="footer-remove" onClick="{{removeSelected}}">Remove prospect</div>
+      </sc-if>
+      <sc-if value="{{selected.canEdit}}" hint-placeholder-val="{{false}}">
+        <div class="save-bar">
+          <span class="{{selected.saveStateClass}}">{{selected.saveStateText}}</span>
+          <div style="display:flex;gap:8px;">
+            <sc-if value="{{selected.dirty}}" hint-placeholder-val="{{false}}"><button class="btn-ghost" onClick="{{discardEdits}}">Discard</button></sc-if>
+            <button class="save-btn" style="background:{{accent}}" onClick="{{saveEdits}}" disabled="{{selected.clean}}">{{selected.saveBtnLabel}}</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{modalOpen}}" hint-placeholder-val="{{false}}">
+  <div class="scrim">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 class="modal-title">New prospect</h2>
+        <button class="icon-btn" onClick="{{closeAdd}}" aria-label="Close">×</button>
+      </div>
+      <div class="form-grid">
+        <div class="field"><span class="field-label">Brand name</span><input class="field-input" value="{{draft.brand}}" onChange="{{setDraftBrand}}"></div>
+        <div class="field"><span class="field-label">Category</span><select class="field-input" value="{{draft.category}}" onChange="{{setDraftCategory}}"><option value="">Choose…</option><sc-for list="{{categories}}" as="c" hint-placeholder-count="4"><option value="{{c}}">{{c}}</option></sc-for></select></div>
+        <div class="field field-wide"><span class="field-label">Brief · 2 lines</span><textarea class="field-input field-textarea" rows="2" maxLength="220" placeholder="What the brand wants, in two lines" value="{{draft.brief}}" onChange="{{setDraftBrief}}"></textarea></div>
+        <div class="field field-wide"><span class="field-label">Assigned to · pick one or more</span><div class="assign-row"><sc-for list="{{draftAssignChips}}" as="a" hint-placeholder-count="3"><button class="tag-chip" style="{{a.style}}" onClick="{{a.toggle}}">{{a.name}}</button></sc-for><input class="field-input assign-new" placeholder="+ add name, Enter" value="{{assignNewText}}" onChange="{{setAssignNewText}}" onKeyDown="{{draftAssignNewKey}}"></div></div>
+        <div class="field"><span class="field-label">Priority</span><select class="field-input" value="{{draft.priority}}" onChange="{{setDraftPriority}}"><option value="">None</option><sc-for list="{{priorities}}" as="pr" hint-placeholder-count="3"><option value="{{pr}}">{{pr}}</option></sc-for></select></div>
+        <div class="field"><span class="field-label">Deal value (₹)</span><input class="field-input" value="{{draft.value}}" onChange="{{setDraftValue}}"></div>
+        <div class="field"><span class="field-label">Source</span><input class="field-input" value="{{draft.source}}" onChange="{{setDraftSource}}"></div>
+        <div class="field"><span class="field-label">Contact person</span><input class="field-input" value="{{draft.contactPerson}}" onChange="{{setDraftContactPerson}}"></div>
+        <div class="field"><span class="field-label">Contact email</span><input class="field-input" value="{{draft.contactEmail}}" onChange="{{setDraftContactEmail}}"></div>
+        <div class="field"><span class="field-label">Tags</span><input class="field-input" placeholder="e.g. Fashion, D2C" value="{{draft.tags}}" onChange="{{setDraftTags}}"></div>
+        <div class="field field-wide"><span class="field-label">Scope</span><textarea class="field-input field-textarea" rows="2" placeholder="What's in and out of this engagement" value="{{draft.scope}}" onChange="{{setDraftScope}}"></textarea></div>
+        <div class="field"><span class="field-label">Next milestone</span><input class="field-input" placeholder="e.g. Send intro deck" value="{{draft.nextAction}}" onChange="{{setDraftNextAction}}"></div>
+        <div class="field"><span class="field-label">Milestone date</span><input class="field-input" type="date" value="{{draft.nextActionDue}}" onChange="{{setDraftNextActionDue}}"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onClick="{{closeAdd}}">Cancel</button>
+        <button class="btn-primary" style="background:{{accent}}" onClick="{{addProspect}}">Add prospect</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{teamOpen}}" hint-placeholder-val="{{false}}">
+  <div class="scrim">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 class="modal-title">Team</h2>
+        <button class="icon-btn" onClick="{{closeTeam}}" aria-label="Close">×</button>
+      </div>
+      <p class="drawer-sub" style="margin:0 0 10px;">People here can be tagged and assigned. Add an email so they're notified by mail.</p>
+      <div class="team-list">
+        <sc-for list="{{teamRows}}" as="t" hint-placeholder-count="3">
+          <div class="team-row">
+            <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}"><input class="field-input team-name" style="font-weight:600;" value="{{t.nameValue}}" onChange="{{t.onName}}" onBlur="{{t.commitName}}" onKeyDown="{{t.nameKey}}" title="Edit name"></sc-if>
+            <sc-if value="{{notMaster}}" hint-placeholder-val="{{true}}"><span class="team-name">{{t.name}} <span class="team-you">{{t.youLabel}}</span></span></sc-if>
+            <input class="field-input team-email" placeholder="name@atomcontent.in" value="{{t.email}}" onChange="{{t.onEmail}}" onKeyDown="{{t.onKey}}" disabled="{{t.emailLocked}}">
+            <sc-if value="{{t.canSave}}" hint-placeholder-val="{{false}}"><button class="mini-save" style="background:{{accent}}" onClick="{{t.save}}" disabled="{{t.clean}}">{{t.saveLabel}}</button></sc-if>
+            <sc-if value="{{t.canRemove}}" hint-placeholder-val="{{false}}"><button class="row-remove" onClick="{{t.remove}}" aria-label="Remove">×</button></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{teamEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No one yet.</div></sc-if>
+      </div>
+      <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}">
+        <div class="team-add">
+          <input class="field-input" placeholder="Name" value="{{newPerson.name}}" onChange="{{setNewPersonName}}">
+          <input class="field-input" placeholder="Email" value="{{newPerson.email}}" onChange="{{setNewPersonEmail}}">
+          <button class="post-btn" style="background:{{accent}}" onClick="{{addPerson}}">Add person</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{notMaster}}" hint-placeholder-val="{{true}}">
+        <div class="lock-note" style="margin-top:14px;">You can set your own email. Only a master can add or remove people.</div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{mgOpen}}" hint-placeholder-val="{{false}}">
+  <div class="scrim">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 class="modal-title">Manage</h2>
+        <button class="icon-btn" onClick="{{closeMg}}" aria-label="Close">×</button>
+      </div>
+      <div class="mg-tabs">
+        <sc-for list="{{mgTabs}}" as="t" hint-placeholder-count="5"><button class="tag-chip" style="{{t.style}}" onClick="{{t.select}}">{{t.label}}</button></sc-for>
+      </div>
+      <p class="drawer-sub" style="margin:0 0 10px;">{{mgDesc}}</p>
+      <div class="team-list">
+        <sc-for list="{{mgRows}}" as="r" hint-placeholder-count="4">
+          <div class="team-row">
+            <input class="field-input team-email" value="{{r.name}}" onChange="{{r.onName}}" onKeyDown="{{r.onKey}}">
+            <span class="team-you">{{r.count}}</span>
+            <button class="mini-save" style="background:{{accent}}" onClick="{{r.save}}" disabled="{{r.clean}}">{{r.saveLabel}}</button>
+            <button class="row-remove" onClick="{{r.remove}}" aria-label="Delete">×</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{mgEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">Nothing here yet.</div></sc-if>
+      </div>
+      <div class="post-row" style="margin-top:16px;">
+        <input class="post-input" placeholder="{{mgAddPlaceholder}}" value="{{mgNew}}" onChange="{{setMgNew}}" onKeyDown="{{mgNewKey}}">
+        <button class="post-btn" style="background:{{accent}}" onClick="{{mgAdd}}">Add</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{pinOpen}}" hint-placeholder-val="{{false}}">
+  <div class="scrim">
+    <div class="modal" style="width:min(420px,calc(100% - 32px));">
+      <div class="modal-head">
+        <h2 class="modal-title">Master access</h2>
+        <button class="icon-btn" onClick="{{closePin}}" aria-label="Close">×</button>
+      </div>
+      <p class="drawer-sub" style="margin:0 0 14px;">Masters can edit every prospect, manage stages and the team, and remove anything.</p>
+      <div class="field"><span class="field-label">Master PIN</span><input class="field-input" type="password" value="{{pinInput}}" onChange="{{setPinInput}}" onKeyDown="{{pinKey}}"></div>
+      <sc-if value="{{pinError}}" hint-placeholder-val="{{false}}"><div class="err" style="margin-top:8px;">Wrong PIN.</div></sc-if>
+      <div class="modal-actions">
+        <button class="btn-ghost" onClick="{{closePin}}">Cancel</button>
+        <button class="btn-primary" style="background:{{accent}}" onClick="{{unlockMaster}}">Unlock</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<div class="live">
+  <div class="live-head" onClick="{{toggleLive}}">
+    <span class="live-dot" style="{{liveDotStyle}}"></span>
+    <span class="live-title">Live activity</span>
+    <span class="live-count">{{liveCountLabel}}</span>
+  </div>
+  <sc-if value="{{liveOpen}}" hint-placeholder-val="{{false}}">
+    <div class="live-list">
+      <sc-for list="{{liveItems}}" as="a" hint-placeholder-count="0">
+        <div class="{{a.cls}}"><div><strong>{{a.who}}</strong> {{a.text}}</div><div class="live-meta">{{a.when}}</div></div>
+      </sc-for>
+      <sc-if value="{{liveEmpty}}" hint-placeholder-val="{{true}}"><div class="live-item" style="color:#4b4f5a;">No activity yet. Changes by anyone will appear here.</div></sc-if>
+    </div>
+  </sc-if>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+  <div class="toast" onClick="{{openToast}}">
+    <strong>{{toast.from}}</strong> {{toast.verb}} <strong>{{toast.prospectBrand}}</strong>
+    <div class="toast-text">{{toast.text}}</div>
+  </div>
+</sc-if>
+
+<datalist id="priority-options">
+  <sc-for list="{{priorities}}" as="pr" hint-placeholder-count="3">
+    <option value="{{pr}}"></option>
+  </sc-for>
+</datalist>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2547f4&quot;,&quot;options&quot;:[&quot;#2547f4&quot;,&quot;#173099&quot;,&quot;#0f172a&quot;,&quot;#111111&quot;]},&quot;emailMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;mailto&quot;,&quot;server&quot;,&quot;off&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;supabaseUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Supabase&quot;},&quot;supabaseAnonKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Supabase&quot;}}">
+// ▼ PASTE YOUR SUPABASE CREDENTIALS HERE (Project Settings → API)
+const SUPABASE_URL = 'https://nqgqswpjfysmrzvcruju.supabase.co';        // e.g. 'https://abcd1234.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xZ3Fzd3BqZnlzbXJ6dmNydWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NzczNzQsImV4cCI6MjEwNjI1MzM3NH0.1ARO9EZIWNUFKn6HKbVPwm_fKXYG94rEkvqB-bqvwhI';   // the "anon public" key
+const SUPABASE_PUBLISHABLE_KEY = '';   // sb_publishable_… (Project Settings → API Keys) — used for the Gmail function
+// Automatic email (free at emailjs.com) — fill these 3 and mails send on their own:
+const EMAILJS_SERVICE_ID = '';
+const EMAILJS_TEMPLATE_ID = '';
+const EMAILJS_PUBLIC_KEY = '';
+// Send mail from each person's OWN Gmail — paste your Google OAuth Client ID:
+const GOOGLE_CLIENT_ID = '943423733158-lh7mk17a3ek8dfphsiu3ftnh7fdtqa3d.apps.googleusercontent.com';     // e.g. '1234-abc.apps.googleusercontent.com'
+const GMAIL_FUNCTIONS = ['clever-responder', 'gmail'];   // Supabase Edge Function name(s) — first that exists is used
+const MASTER_PIN = '2026';       // ← change this: PIN for master edit access
+// ▲
+const CATEGORIES = ['Campaign','Social','Ngen','Chopshop'];
+const DOC_TYPES = ['Brief','Deck','Proposal','Contract','Other'];
+const MAIL_TABLE = 'atom_mail';
+const DOC_BUCKET = 'atom-docs';
+const MASTER_KEY = 'atom-wip-master';
+const STAGES = ['New','Contacted','Pitch','Proposal','Negotiation','Won','Lost'];
+const PRIORITIES = ['High','Medium','Low'];
+const PALETTE = ['#2547f4','#173099','#558a42','#c9a82d','#a63244','#6a9bcc','#8a8e99','#0f172a'];
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+const STORE_KEY = 'atom-wip-board-v2';
+const TABLE = 'atom_board';
+// ▼ BACKEND: 'neon' (Netlify Functions + Neon Postgres) or 'supabase'
+const BACKEND = 'neon';
+const API_BASE = '/api';
+const POLL_MS = 4000;
+function neonClient() {
+  const call = async (path, opts) => {
+    try {
+      const r = await fetch(API_BASE + path, opts);
+      const txt = await r.text(); let j = null; try { j = txt ? JSON.parse(txt) : null; } catch (e) {}
+      if (!r.ok) return { data: null, error: { message: (j && j.error) || txt || ('HTTP ' + r.status), context: { status: r.status, json: async () => j || {} } } };
+      return { data: j, error: null };
+    } catch (e) { return { data: null, error: { message: e.message, context: { status: 0, json: async () => ({}) } } }; }
+  };
+  const post = (path, body) => call(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  let lastTs = '';
+  const track = (rows) => { (rows || []).forEach(r => { if (r.updated_at && r.updated_at > lastTs) lastTs = r.updated_at; }); };
+  const client = {
+    from(table) {
+      return {
+        select() {
+          const run = (keys) => call('/board' + (keys ? '?keys=' + encodeURIComponent(keys.join(',')) : '')).then(res => { if (!keys) track(res.data); return res; });
+          return { then: (a, b) => run(null).then(a, b), in: (col, keys) => run(keys) };
+        },
+        upsert(rows) { return post('/board', { rows }); },
+        insert(rows) { return post('/mail', { rows }); }
+      };
+    },
+    storage: {
+      from() {
+        return {
+          upload: (path, file) => call('/upload?path=' + encodeURIComponent(path), { method: 'POST', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file }),
+          getPublicUrl: (path) => ({ data: { publicUrl: location.origin + API_BASE + '/file?path=' + encodeURIComponent(path) } })
+        };
+      }
+    },
+    functions: { invoke: (name, opts) => post('/gmail', (opts && opts.body) || {}) },
+    channel() {
+      let handler = null, timer = null, stopped = false;
+      const ch = {
+        on(_e, _f, cb) { handler = cb; return ch; },
+        subscribe(statusCb) {
+          const tick = async () => {
+            if (stopped) return;
+            if (lastTs) {
+              const res = await call('/board?since=' + encodeURIComponent(lastTs));
+              if (res.error) { statusCb && statusCb('CHANNEL_ERROR'); }
+              else { track(res.data); (res.data || []).forEach(row => handler && handler({ new: row })); }
+            }
+            if (!stopped) timer = setTimeout(tick, document.hidden ? POLL_MS * 4 : POLL_MS);
+          };
+          timer = setTimeout(tick, POLL_MS);
+          ch._stop = () => { stopped = true; clearTimeout(timer); };
+          return ch;
+        }
+      };
+      return ch;
+    },
+    removeChannel(ch) { ch && ch._stop && ch._stop(); }
+  };
+  return client;
+}
+const VIEWER_KEY = 'atom-wip-viewer';
+const SHARED = ['prospects','nextId','stages','priorities','notifications','people','categories','docTypes','activity','deletedIds'];
+function mergeProspects(local, remote, deleted) {
+  const del = new Set(deleted || []); const m = new Map();
+  [...(remote || []), ...(local || [])].forEach(p => { if (!p || !p.id) return; const c = m.get(p.id); if (!c || (p._u || 0) >= (c._u || 0)) m.set(p.id, p); });
+  return [...m.values()].filter(p => !del.has(p.id));
+}
+function mergeActivity(a, b) {
+  const m = new Map(); [...(a || []), ...(b || [])].forEach(x => { if (x && x.id && !m.has(x.id)) m.set(x.id, x); });
+  return [...m.values()].sort((x, y) => (y.ts || 0) - (x.ts || 0)).slice(0, 200);
+}
+function mergeIds(a, b) { return [...new Set([...(a || []), ...(b || [])])].slice(-1000); }
+const MG = { stages: { label: 'Stages', one: 'stage', field: 'stage' }, categories: { label: 'Categories', one: 'category', field: 'category' }, priorities: { label: 'Priorities', one: 'priority', field: 'priority' }, docTypes: { label: 'Doc types', one: 'doc type', field: 'docType' } };
+function pickShared(d) { const o = {}; SHARED.forEach(k => { if (d[k] !== undefined) o[k] = d[k]; }); return o; }
+function timeAgo(ts) {
+  const m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return 'Just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h / 24) + 'd ago';
+}
+function splitNames(str) { if (Array.isArray(str)) str = str.join(', '); if (str && typeof str === 'object') str = str.name || ''; return String(str ?? '').split(/\s*(?:,|&|\+|\/|\band\b)\s*/i).map(x => x.trim()).filter(Boolean); }
+function nm(v) { return v && typeof v === 'object' ? String(v.name ?? '') : String(v ?? ''); }
+function sameName(a, b) { return nm(a).trim().toLowerCase() === nm(b).trim().toLowerCase(); }
+function toArr(v) { return Array.isArray(v) ? v.filter(x => x != null) : (v && typeof v === 'object') ? Object.keys(v).sort((a, b) => a - b).map(i => v[i]).filter(x => x != null) : []; }
+function dedupeIds(list) {
+  const seen = {};
+  return list.map(p => {
+    const base = String(p.id || 'p');
+    if (!seen[base]) { seen[base] = 1; return { ...p, id: base }; }
+    let id; do { id = base + '_' + (seen[base]++); } while (list.some(q => q.id === id));
+    return { ...p, id };
+  });
+}
+function uid() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function fixPriority(v) {
+  const t = String(v ?? '').trim(); if (!t) return '';
+  const hit = PRIORITIES.find(p => p.toLowerCase() === t.toLowerCase()); if (hit) return hit;
+  const c = t[0].toLowerCase();
+  if (c === 'h') return 'High'; if (c === 'm') return 'Medium'; if (c === 'l') return 'Low';
+  return /^[\w][\w \-]{2,}$/.test(t) ? t : '';
+}
+function cleanPriorityList(list) {
+  const out = [...PRIORITIES];
+  toArr(list).forEach(x => { const v = fixPriority(x); if (v && !out.some(o => o.toLowerCase() === v.toLowerCase())) out.push(v); });
+  return out;
+}
+function normKey(k, v) {
+  if (k === 'priorities') return cleanPriorityList(v);
+  if (k === 'nextId') return Number(v) || 1;
+  if (k === 'prospects') return dedupeIds(toArr(v).map(p => ({ brand:'', stage:'New', assignee:'', priority:'', value:'', contactPerson:'', contactEmail:'', source:'', tags:'', category:'', brief:'', scope:'', createdBy:'', added:'', lastUpdateLabel:'', stalled:false, ...p, docs: toArr(p.docs), updates: toArr(p.updates), deliverables: toArr(p.deliverables), priority: fixPriority(p.priority) })));
+  if (k === 'people') return toArr(v).map(x => typeof x === 'string' ? { name: x, email: '' } : { name: String(x.name ?? ''), email: String(x.email ?? '') }).filter(x => x.name);
+  return toArr(v);
+}
+function normShared(d) { const o = {}; SHARED.forEach(k => { if (k === 'nextId' && (!d || d[k] == null)) return; if ((k === 'stages' || k === 'priorities' || k === 'categories' || k === 'docTypes') && (!d || d[k] == null)) return; o[k] = normKey(k, d ? d[k] : undefined); }); return o; }
+function stableStr(v) {
+  if (v === null || v === undefined) return 'null';
+  if (Array.isArray(v)) return '[' + v.map(stableStr).join(',') + ']';
+  if (typeof v === 'object') return '{' + Object.keys(v).filter(k => v[k] != null && !(Array.isArray(v[k]) && !v[k].length)).sort().map(k => JSON.stringify(k) + ':' + stableStr(v[k])).join(',') + '}';
+  return JSON.stringify(v);
+}
+function setPath(obj, segs, val) {
+  if (!segs.length) return val;
+  const o = (obj && typeof obj === 'object') ? (Array.isArray(obj) ? [...obj] : { ...obj }) : {};
+  const nv = setPath(o[segs[0]], segs.slice(1), val);
+  if (nv === null || nv === undefined) delete o[segs[0]]; else o[segs[0]] = nv;
+  return o;
+}
+function colorForIndex(i) { return PALETTE[((i % PALETTE.length) + PALETTE.length) % PALETTE.length]; }
+
+function seedProspects() { return []; }
+
+function msInfo(dateStr) {
+  if (!dateStr) return { label: 'No date', cls: 'ms-due', days: null };
+  const d = new Date(dateStr + 'T00:00:00'); if (isNaN(d)) return { label: dateStr, cls: 'ms-due', days: null };
+  const t = new Date(); t.setHours(0,0,0,0);
+  const days = Math.round((d - t) / 86400000);
+  const short = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  if (days < 0) return { label: short + ' · ' + (-days) + 'd late', cls: 'ms-late', days };
+  if (days === 0) return { label: 'Today', cls: 'ms-soon', days };
+  if (days === 1) return { label: 'Tomorrow', cls: 'ms-soon', days };
+  if (days <= 3) return { label: short + ' · in ' + days + 'd', cls: 'ms-soon', days };
+  return { label: short, cls: 'ms-due', days };
+}
+function emptyDraft() {
+  return { brand:'', category:'', brief:'', scope:'', assignee:'', priority:'Medium', value:'', contactPerson:'', contactEmail:'', source:'Referral', tags:'', nextAction:'', nextActionDue:'' };
+}
+
+class Component extends DCLogic {
+  state = {
+    prospects: seedProspects(),
+    nextId: 1,
+    stages: [...STAGES],
+    categories: [...CATEGORIES],
+    docTypes: [...DOC_TYPES],
+    mgOpen: false, mgTab: 'stages', mgDrafts: {}, mgNew: '',
+    delivDrafts: {}, docEdit: null, updEdit: null, updEditText: '', nameDrafts: {},
+    catOpen: false, catDrafts: {}, newCatName: '',
+    priorities: [...PRIORITIES],
+    newStageName: '',
+    notifications: [],
+    people: [],
+    notifsOpen: false,
+    toast: null,
+    alertPermission: (() => { try { return (typeof Notification !== 'undefined') ? Notification.permission : 'unsupported'; } catch (e) { return 'unsupported'; } })(),
+    view: 'board',
+    search: '',
+    filterAssignee: '',
+    filterPriority: '',
+    filterTag: '',
+    selectedId: null,
+    modalOpen: false,
+    draft: emptyDraft(),
+    newUpdateText: '',
+    viewerName: 'You',
+    syncStatus: 'local',
+    filterCategory: '',
+    isMaster: false,
+    pinOpen: false, pinInput: '', pinError: false,
+    teamOpen: false, newPerson: { name: '', email: '' },
+    newDeliverable: '',
+    docDraft: { type: 'Brief', name: '', url: '' }, docFileName: '', docError: '', uploading: false,
+    emailTagged: true,
+    assignNewText: '',
+    activity: [], deletedIds: [], liveOpen: (typeof window !== 'undefined' && window.innerWidth > 700), liveSeenTs: Date.now(),
+    renamingStage: null, stageRenameText: '', stageDropTarget: null, touchMoving: null,
+    gmailEmail: (() => { try { return localStorage.getItem('atom-gmail') || ''; } catch (e) { return ''; } })(),
+    edits: {},
+    emailDrafts: {},
+    justSaved: false
+  };
+
+  componentDidMount() {
+    this._tMove = (e) => {
+      const t = e.touches && e.touches[0]; if (!t) return;
+      if (this._press && !this._touchStage) {
+        if (Math.abs(t.clientX - this._press.x) > 10 || Math.abs(t.clientY - this._press.y) > 10) { clearTimeout(this._press.timer); this._press = null; }
+        return;
+      }
+      if (!this._touchStage) return;
+      e.preventDefault();
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      const col = el && el.closest && el.closest('[data-stage]');
+      const target = col ? col.getAttribute('data-stage') : null;
+      if (target !== this.state.stageDropTarget) this.setState({ stageDropTarget: target });
+      const k = document.querySelector('.kanban');
+      if (k) { const r = k.getBoundingClientRect(); if (t.clientX > r.right - 40) k.scrollLeft += 12; else if (t.clientX < r.left + 40) k.scrollLeft -= 12; }
+    };
+    this._tEnd = () => {
+      if (this._press) { clearTimeout(this._press.timer); this._press = null; }
+      if (!this._touchStage) return;
+      const from = this._touchStage, to = this.state.stageDropTarget;
+      this._touchStage = null; this._dragStage = null;
+      this.setState({ stageDropTarget: null, touchMoving: null });
+      if (to && to !== from) this.dropStage(from, to);
+    };
+    document.addEventListener('touchmove', this._tMove, { passive: false });
+    document.addEventListener('touchend', this._tEnd);
+    document.addEventListener('touchcancel', this._tEnd); this.init(); }
+  init() {
+    if (this._inited) return;
+    this._inited = true;
+    let stored = null;
+    try { const raw = localStorage.getItem(STORE_KEY); if (raw) stored = JSON.parse(raw); } catch (e) {}
+    this._seen = new Set(((stored && stored.notifications) || []).map(n => n.id));
+    if (stored) { this._remote = true; this.setState(normShared(stored)); }
+    else { this.persist(); }
+    try { if (localStorage.getItem(MASTER_KEY) === '1') this.setState({ isMaster: true }); } catch (e) {}
+    this._loaded = true;
+    try { const v = localStorage.getItem(VIEWER_KEY); if (v) this.setState({ viewerName: v }); } catch (e) {}
+    this._onStorage = (e) => {
+      if (e.key !== STORE_KEY || !e.newValue) return;
+      let d; try { d = JSON.parse(e.newValue); } catch (err) { return; }
+      this.alertNew(d.notifications || []);
+      this._remote = true;
+      this.setState(normShared(d));
+    };
+    window.addEventListener('storage', this._onStorage);
+    this.connectRemote();
+  }
+  cleanPriorities() {
+    const s = this.state;
+    const pr = cleanPriorityList(s.priorities);
+    const badP = s.prospects.some(p => fixPriority(p.priority) !== (p.priority || ''));
+    if (stableStr(pr) === stableStr(s.priorities) && !badP) return;
+    this.setState({ priorities: pr, prospects: badP ? s.prospects.map(p => fixPriority(p.priority) === (p.priority || '') ? p : { ...p, priority: fixPriority(p.priority) }) : s.prospects });
+  }
+  ensurePitch() {
+    try { if (localStorage.getItem('atom-pitch-added') === '1') return; localStorage.setItem('atom-pitch-added', '1'); } catch (e) {}
+    this.setState(s => {
+      if (s.stages.some(x => /^pitch$/i.test(x))) return null;
+      const st = [...s.stages];
+      const ci = st.findIndex(x => /^contacted$/i.test(x)), pi = st.findIndex(x => /^proposal$/i.test(x));
+      st.splice(ci >= 0 ? ci + 1 : (pi >= 0 ? pi : st.length), 0, 'Pitch');
+      return { stages: st };
+    });
+  }
+  componentDidUpdate(prev) {
+    if (this._inited && ((prev.supabaseUrl || '') !== (this.props.supabaseUrl || '') || (prev.supabaseAnonKey || '') !== (this.props.supabaseAnonKey || ''))) this.connectRemote();
+  }
+  disconnectRemote() {
+    clearTimeout(this._sbWait);
+    if (this._sb && this._chan) { try { this._sb.removeChannel(this._chan); } catch (e) {} }
+    this._sb = null; this._chan = null;
+  }
+  connectRemote() {
+    this.disconnectRemote();
+    this._synced = false; this._rd = undefined; this._dirty = new Set(); this._sentHist = {};
+    const url = (this.props.supabaseUrl || SUPABASE_URL || '').trim().replace(/\/+$/, '');
+    const key = (this.props.supabaseAnonKey || SUPABASE_ANON_KEY || '').trim();
+    if (BACKEND !== 'neon' && (!url || !key)) { this.setState({ syncStatus: (url || key) ? 'error' : 'local' }); setTimeout(() => this.ensurePitch(), 50); return; }
+    let tries = 0;
+    const start = () => {
+      if (BACKEND !== 'neon' && (!window.supabase || !window.supabase.createClient)) {
+        if (++tries > 100) { this.setState({ syncStatus: 'error' }); return; }
+        this._sbWait = setTimeout(start, 200); return;
+      }
+      let sb;
+      try { sb = BACKEND === 'neon' ? neonClient() : window.supabase.createClient(url, key); } catch (e) { this.setState({ syncStatus: 'error' }); return; }
+      this._sb = sb;
+      this.setState({ syncStatus: 'connecting' });
+      this._chan = sb.channel('atom-board-live')
+        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, (payload) => {
+          const row = payload.new;
+          if (!this._synced || !row || !row.key) return;
+          this._rd = { ...(this._rd || {}), [row.key]: row.data };
+          this.applyRemote();
+        })
+        .subscribe((status) => { if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') this.setState({ syncStatus: 'error' }); });
+      sb.from(TABLE).select('key,data').then(({ data, error }) => {
+        if (error) { console.warn('[supabase]', error.message); this.setState({ syncStatus: 'error' }); return; }
+        const rd = {};
+        (data || []).forEach(r => { rd[r.key] = r.data; });
+        this._rd = (data && data.length) ? rd : null;
+        this.applyRemote();
+      });
+    };
+    start();
+  }
+  applyRemote() {
+    const first = !this._synced;
+    this._synced = true;
+    if (first) setTimeout(() => { this.ensurePitch(); this.cleanPriorities(); }, 50);
+    if (first && !this._rd) {
+      SHARED.forEach(k => this._dirty.add(k));
+      this.setState({ syncStatus: 'live' });
+      this.pushRemote();
+      return;
+    }
+    const d = normShared(this._rd || {});
+    const upd = {};
+    SHARED.forEach(k => {
+      if (d[k] === undefined || this._dirty.has(k)) return;
+      const inc = stableStr(d[k]);
+      if (this._sentHist[k] && this._sentHist[k].includes(inc)) return;
+      if (inc === stableStr(normKey(k, this.state[k]))) return;
+      if (k === 'prospects') upd[k] = mergeProspects(this.state.prospects, d.prospects, mergeIds(this.state.deletedIds, d.deletedIds));
+      else if (k === 'activity') upd[k] = mergeActivity(this.state.activity, d.activity);
+      else if (k === 'deletedIds') upd[k] = mergeIds(this.state.deletedIds, d.deletedIds);
+      else upd[k] = d[k];
+    });
+    if (first) (d.notifications || []).forEach(n => this._seen.add(n.id));
+    else if (upd.notifications) this.alertNew(upd.notifications);
+    if (Object.keys(upd).length) {
+      this._remote = true;
+      this.setState({ ...upd, syncStatus: 'live' });
+      if (upd.priorities || upd.prospects) setTimeout(() => this.cleanPriorities(), 0);
+      try { localStorage.setItem(STORE_KEY, JSON.stringify({ ...pickShared(this.state), ...upd })); } catch (e) {}
+    } else if (this.state.syncStatus !== 'live') this.setState({ syncStatus: 'live' });
+  }
+  async pushRemote() {
+    if (!this._sb) return;
+    if (this._pushing) { clearTimeout(this._pushTimer); this._pushTimer = setTimeout(() => this.pushRemote(), 300); return; }
+    this._pushing = true;
+    try {
+      const mk = ['prospects', 'activity', 'deletedIds'].filter(k => this._dirty.has(k));
+      if (mk.length) {
+        const { data, error } = await this._sb.from(TABLE).select('key,data').in('key', ['prospects', 'activity', 'deletedIds']);
+        if (!error && data) {
+          const r = {}; data.forEach(x => { r[x.key] = x.data; });
+          const del = mergeIds(this.state.deletedIds, toArr(r.deletedIds));
+          const merged = {
+            deletedIds: del,
+            prospects: mergeProspects(this.state.prospects, normKey('prospects', r.prospects), del),
+            activity: mergeActivity(this.state.activity, toArr(r.activity))
+          };
+          const changed = {};
+          Object.keys(merged).forEach(k => { if (stableStr(merged[k]) !== stableStr(this.state[k])) changed[k] = merged[k]; });
+          ['prospects', 'activity', 'deletedIds'].forEach(k => this._dirty.add(k));
+          if (Object.keys(changed).length) { this._remote = true; await new Promise(res => this.setState(changed, res)); }
+        }
+      }
+      this.pushRows();
+    } finally { this._pushing = false; }
+  }
+  pushRows() {
+    const rows = [];
+    const now = new Date().toISOString();
+    this._dirty.forEach(k => {
+      rows.push({ key: k, data: this.state[k], updated_at: now });
+      const h = this._sentHist[k] || (this._sentHist[k] = []);
+      h.push(stableStr(normKey(k, JSON.parse(JSON.stringify(this.state[k])))));
+      if (h.length > 20) h.shift();
+    });
+    this._dirty.clear();
+    if (!rows.length) return;
+    this._sb.from(TABLE).upsert(rows).then(({ error }) => {
+      if (error) { console.warn('[supabase]', error.message); this.setState({ syncStatus: 'error' }); }
+    });
+  }
+  componentWillUnmount() {
+    document.removeEventListener('touchmove', this._tMove);
+    document.removeEventListener('touchend', this._tEnd);
+    document.removeEventListener('touchcancel', this._tEnd);
+    window.removeEventListener('storage', this._onStorage);
+    clearTimeout(this._toastTimer);
+    clearTimeout(this._pushTimer);
+    this.disconnectRemote();
+  }
+  persist() {
+    const prev = this._lastRefs || {};
+    if (prev.prospects && prev.prospects !== this.state.prospects) {
+      const pm = new Map(prev.prospects.map(p => [p.id, p]));
+      const now = Date.now();
+      this.state.prospects.forEach(p => { if (pm.get(p.id) !== p) p._u = now; });
+      const ids = new Set(this.state.prospects.map(p => p.id));
+      const removed = prev.prospects.filter(p => !ids.has(p.id)).map(p => p.id);
+      if (removed.length) setTimeout(() => this.setState(s => ({ deletedIds: mergeIds(s.deletedIds, removed) })), 0);
+    }
+    this._lastRefs = pickShared(this.state);
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(this._lastRefs)); } catch (e) {}
+    if (this._sb && this._synced) {
+      SHARED.forEach(k => { if (prev[k] !== this._lastRefs[k]) this._dirty.add(k); });
+      clearTimeout(this._pushTimer);
+      this._pushTimer = setTimeout(() => this.pushRemote(), 350);
+    }
+  }
+  maybePersist() {
+    if (!this._loaded) return;
+    if (this._remote) { this._remote = false; this._lastRefs = pickShared(this.state); return; }
+    const last = this._lastRefs || {};
+    if (SHARED.some(k => last[k] !== this.state[k])) this.persist();
+  }
+
+  alertNew = (list) => {
+    const me = this.state.viewerName;
+    list.forEach(n => {
+      if (this._seen.has(n.id)) return;
+      this._seen.add(n.id);
+      if (!sameName(n.to, me) || n.read) return;
+      const verb = n.kind === 'assign' ? 'assigned you' : 'tagged you on';
+      this.showToast({ ...n, verb });
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        try { new Notification(n.from + ' ' + verb + ' ' + n.prospectBrand, { body: n.text }); } catch (e) {}
+      }
+    });
+  };
+  logActivity = (text) => {
+    const a = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ts: Date.now(), who: this.state.viewerName || 'Someone', text };
+    this.setState(s => ({ activity: mergeActivity([a], s.activity) }));
+  };
+  saved = (brand, text) => {
+    this.logActivity((brand ? brand + ' — ' : '') + (text || 'updated'));
+    this.showToast({ from: '✓ Saved', verb: '', prospectBrand: brand || '', text: text || 'Live for everyone on the board.' });
+  };
+  setEdit = (field, value) => this.setState(s => ({ edits: { ...s.edits, [field]: value }, justSaved: false }));
+  discardEdits = () => this.setState({ edits: {}, assignNewText: '' });
+  saveEdits = () => {
+    const id = this.state.selectedId, e = this.state.edits;
+    const p = this.state.prospects.find(x => x.id === id);
+    if (!p || !Object.keys(e).length) return;
+    const { assignee, ...rest } = e;
+    this.setState(s => ({ prospects: s.prospects.map(x => x.id === id ? { ...x, ...rest, lastUpdateLabel: 'Just now' } : x), edits: {}, justSaved: true }));
+    if (assignee !== undefined && assignee !== p.assignee) this.changeAssignee({ ...p, ...rest }, assignee);
+    this.saved(rest.brand || p.brand);
+  };
+  closeDrawerSafe = () => {
+    if (Object.keys(this.state.edits).length && !window.confirm('You have unsaved changes. Close without saving?')) return;
+    this._keepId = this.state.selectedId;
+    this.setState({ selectedId: null, edits: {}, justSaved: false });
+  };
+  openCats = () => this.setState({ catOpen: true, catDrafts: {}, newCatName: '' });
+  closeCats = () => {
+    if (Object.values(this.state.catDrafts).some(v => v !== undefined) && !window.confirm('You have unsaved category names. Close without saving?')) return;
+    this.setState({ catOpen: false, catDrafts: {} });
+  };
+  addCategory = () => {
+    const n = this.state.newCatName.trim();
+    if (!n || !this.state.isMaster) return;
+    if (this.state.categories.some(c => c.toLowerCase() === n.toLowerCase())) { this.setState({ newCatName: '' }); return; }
+    this.setState(s => ({ categories: [...s.categories, n], newCatName: '' }));
+    this.saved(n, 'Category added.');
+  };
+  renameCategory = (old) => {
+    const n = String(this.state.catDrafts[old] ?? '').trim();
+    if (!this.state.isMaster || !n || n === old) return;
+    if (this.state.categories.some(c => c !== old && c.toLowerCase() === n.toLowerCase())) { window.alert('A category called "' + n + '" already exists.'); return; }
+    this.setState(s => { const d = { ...s.catDrafts }; delete d[old]; return {
+      categories: s.categories.map(c => c === old ? n : c),
+      prospects: s.prospects.map(p => p.category === old ? { ...p, category: n } : p),
+      filterCategory: s.filterCategory === old ? n : s.filterCategory, catDrafts: d }; });
+    this.saved(n, 'Renamed from ' + old + ' — prospects updated.');
+  };
+  removeCategory = (c) => {
+    if (!this.state.isMaster) return;
+    const n = this.state.prospects.filter(p => p.category === c).length;
+    if (!window.confirm('Remove "' + c + '"?' + (n ? ' ' + n + ' prospect' + (n === 1 ? '' : 's') + ' will become uncategorised.' : ''))) return;
+    this.setState(s => ({ categories: s.categories.filter(x => x !== c), prospects: s.prospects.map(p => p.category === c ? { ...p, category: '' } : p), filterCategory: s.filterCategory === c ? '' : s.filterCategory }));
+    this.saved(c, 'Category removed.');
+  };
+  mgApply = (p, key, old, n) => {
+    if (key === 'docTypes') return p.docs.some(d => d.type === old) ? { ...p, docs: p.docs.map(d => d.type === old ? { ...d, type: n } : d) } : p;
+    const fld = MG[key].field; return p[fld] === old ? { ...p, [fld]: n } : p;
+  };
+  mgCount = (key, item) => key === 'docTypes' ? this.state.prospects.reduce((a, p) => a + p.docs.filter(d => d.type === item).length, 0) : this.state.prospects.filter(p => p[MG[key].field] === item).length;
+  openMg = () => this.setState({ mgOpen: true, mgDrafts: {}, mgNew: '' });
+  closeMg = () => {
+    if (Object.keys(this.state.mgDrafts).length && !window.confirm('You have unsaved names. Close without saving?')) return;
+    this.setState({ mgOpen: false, mgDrafts: {} });
+  };
+  mgAdd = () => {
+    const key = this.state.mgTab, n = this.state.mgNew.trim();
+    if (!n || !this.state.isMaster || !MG[key]) return;
+    if (this.state[key].some(x => x.toLowerCase() === n.toLowerCase())) { window.alert('"' + n + '" already exists.'); return; }
+    this.setState(s => ({ [key]: [...s[key], n], mgNew: '' }));
+    this.saved(n, MG[key].one[0].toUpperCase() + MG[key].one.slice(1) + ' added.');
+  };
+  mgRename = (key, old) => {
+    const n = (this.state.mgDrafts[key + '|' + old] || '').trim();
+    if (!this.state.isMaster || !n || n === old) return;
+    if (this.state[key].some(x => x !== old && x.toLowerCase() === n.toLowerCase())) { window.alert('"' + n + '" already exists.'); return; }
+    this.setState(s => { const d = { ...s.mgDrafts }; delete d[key + '|' + old]; return {
+      [key]: s[key].map(x => x === old ? n : x), mgDrafts: d,
+      prospects: s.prospects.map(p => this.mgApply(p, key, old, n)),
+      filterCategory: key === 'categories' && s.filterCategory === old ? n : s.filterCategory }; });
+    this.saved(n, 'Renamed from ' + old + '.');
+  };
+  mgRemove = (key, item) => {
+    if (!this.state.isMaster) return;
+    const list = this.state[key], n = this.mgCount(key, item);
+    if (key === 'stages' && list.length <= 1) { window.alert('You need at least one stage.'); return; }
+    const fb = key === 'stages' ? list.find(x => x !== item) : key === 'docTypes' ? (list.find(x => x !== item && /^other$/i.test(x)) || list.find(x => x !== item) || 'Other') : '';
+    const what = key === 'docTypes' ? ' document' : ' prospect';
+    if (!window.confirm('Delete "' + item + '"?' + (n ? ' ' + n + what + (n === 1 ? '' : 's') + ' will move to ' + (fb ? '"' + fb + '"' : 'none') + '.' : ''))) return;
+    this.setState(s => ({ [key]: s[key].filter(x => x !== item), prospects: s.prospects.map(p => this.mgApply(p, key, item, fb)), filterCategory: key === 'categories' && s.filterCategory === item ? '' : s.filterCategory }));
+    this.saved(item, 'Deleted.');
+  };
+  commitDeliv = (id, i) => {
+    const v = this.state.delivDrafts[i]; if (v === undefined) return;
+    const t = v.trim();
+    this.setState(s => { const d = { ...s.delivDrafts }; delete d[i]; return { delivDrafts: d, prospects: t ? s.prospects.map(p => p.id === id ? { ...p, deliverables: p.deliverables.map((x, j) => j === i ? { ...x, text: t } : x) } : p) : s.prospects }; });
+    if (t) this.saved('Deliverable', t);
+  };
+  saveDocEdit = () => {
+    const id = this.state.selectedId, e = this.state.docEdit; if (!id || !e) return;
+    const name = e.name.trim(); if (!name) { window.alert('Add a document name.'); return; }
+    let url = e.url.trim(); if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    this.setState(s => ({ docEdit: null, prospects: s.prospects.map(p => p.id === id ? { ...p, docs: p.docs.map((d, j) => j === e.i ? { ...d, type: e.type, name, url } : d) } : p) }));
+    this.saved(name, 'Document updated.');
+  };
+  saveUpdEdit = () => {
+    const id = this.state.selectedId, i = this.state.updEdit, t = this.state.updEditText.trim();
+    if (!id || i === null || !t) return;
+    this.setState(s => ({ updEdit: null, prospects: s.prospects.map(p => p.id === id ? { ...p, updates: p.updates.map((u, j) => j === i ? { ...u, text: t, edited: true } : u) } : p) }));
+    this.saved('Update', 'Edited.');
+  };
+  removeUpd = (id, i) => {
+    if (!window.confirm('Delete this update?')) return;
+    this.setState(s => ({ updEdit: null, prospects: s.prospects.map(p => p.id === id ? { ...p, updates: p.updates.filter((u, j) => j !== i) } : p) }));
+    this.saved('Update', 'Deleted.');
+  };
+  renamePerson = (old) => {
+    const n = String(this.state.nameDrafts[old] ?? '').trim();
+    this.setState(s => { const d = { ...s.nameDrafts }; delete d[old]; return { nameDrafts: d }; });
+    if (!this.state.isMaster || !n || n === old) return;
+    if (this.peopleList().some(x => !sameName(x, old) && sameName(x, n))) { window.alert('"' + n + '" is already on the team.'); return; }
+    const swap = (str) => this.namesOf(str).map(x => sameName(x, old) ? n : x).join(', ');
+    this.setState(s => ({
+      people: s.people.some(p => sameName(p.name, old)) ? s.people.map(p => sameName(p.name, old) ? { ...p, name: n } : p) : [...s.people, { name: n, email: '' }],
+      prospects: s.prospects.map(p => ({ ...p, assignee: this.namesOf(p.assignee).some(x => sameName(x, old)) ? swap(p.assignee) : p.assignee, createdBy: sameName(p.createdBy, old) ? n : p.createdBy })),
+      notifications: s.notifications.map(x => sameName(x.to, old) ? { ...x, to: n } : x),
+      viewerName: sameName(s.viewerName, old) ? n : s.viewerName
+    }));
+    this.saved(n, 'Renamed from ' + old + ' everywhere.');
+  };
+  saveEmail = (name) => {
+    const v = this.state.emailDrafts[name];
+    if (v === undefined) return;
+    this.setPersonEmail(name, v.trim());
+    this.setState(s => { const d = { ...s.emailDrafts }; delete d[name]; return { emailDrafts: d }; });
+    this.saved(name, 'Email saved — they\'ll get notifications at ' + (v.trim() || '(no email)') + '.');
+  };
+  showToast = (t) => {
+    clearTimeout(this._toastTimer);
+    this.setState({ toast: t });
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 6000);
+  };
+  enableAlerts = () => {
+    if (typeof Notification === 'undefined') return;
+    try { Promise.resolve(Notification.requestPermission()).then(p => this.setState({ alertPermission: p })).catch(() => this.setState({ alertPermission: 'denied' })); } catch (e) {}
+  };
+  toggleNotifs = () => this.setState(s => ({ notifsOpen: !s.notifsOpen }));
+  openNotif = (n) => {
+    this.setState(s => ({
+      notifications: s.notifications.map(x => x.id === n.id ? { ...x, read: true } : x),
+      notifsOpen: false, toast: null,
+      selectedId: s.prospects.some(p => p.id === n.prospectId) ? n.prospectId : s.selectedId
+    }));
+  };
+  markAllRead = () => this.setState(s => ({ notifications: s.notifications.map(n => sameName(n.to, s.viewerName) ? { ...n, read: true } : n) }));
+
+  peopleList = () => {
+    const parts = [...this.state.people.map(p => p.name), ...this.state.prospects.map(p => p.assignee)].flatMap(splitNames);
+    const singles = new Set(parts.filter(x => !/\s/.test(x)).map(x => x.toLowerCase()));
+    const all = parts.flatMap(x => /\s/.test(x) && x.split(/\s+/).every(w => singles.has(w.toLowerCase())) ? x.split(/\s+/) : [x]);
+    const out = [];
+    all.forEach(n => { if (!out.some(o => sameName(o, n))) out.push(n); });
+    return out.sort((a, b) => a.localeCompare(b));
+  };
+  namesOf = (str) => {
+    const people = this.peopleList();
+    return splitNames(str).flatMap(x => /\s/.test(x) && !people.some(p => sameName(p, x)) ? x.split(/\s+/) : [x])
+      .map(x => people.find(p => sameName(p, x)) || x)
+      .filter((x, i, arr) => arr.findIndex(y => sameName(y, x)) === i);
+  };
+  toggleName = (str, name) => { const cur = this.namesOf(str); return (cur.some(n => sameName(n, name)) ? cur.filter(n => !sameName(n, name)) : [...cur, name]).join(', '); };
+  setAssignNewText = (e) => this.setState({ assignNewText: e.target.value });
+  registerViewer = () => {
+    const v = this.state.viewerName.trim();
+    if (!v || sameName(v, 'You')) return;
+    this.setState(s => s.people.some(p => sameName(p.name, v)) ? null : { people: [...s.people, { name: v, email: '' }] });
+  };
+  addMention = (name) => {
+    const tag = '@' + name.split(' ')[0];
+    this.setState(s => ({ newUpdateText: (s.newUpdateText.trim() ? s.newUpdateText.replace(/\s*$/, ' ') : '') + tag + ' ' }));
+  };
+
+  stop = (e) => { e.stopPropagation(); };
+  gmailFn = async (body) => {
+    if (!this._sb) throw new Error('Board not connected');
+    let data, error;
+    for (const name of (BACKEND === 'neon' ? ['gmail'] : GMAIL_FUNCTIONS)) {
+      ({ data, error } = await this._sb.functions.invoke(name, SUPABASE_PUBLISHABLE_KEY ? { body, headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: 'Bearer ' + SUPABASE_PUBLISHABLE_KEY } } : { body }));
+      const st = error && error.context && error.context.status;
+      if (!(error && (st === 404 || /not found|failed to send/i.test(error.message || '')))) break;
+    }
+    if (error) { let msg = error.message; try { const j = await error.context.json(); msg = j.error || j.msg || msg; } catch (e) {} throw new Error(msg); }
+    if (data && data.error) throw new Error(data.error);
+    return data;
+  };
+  gmailSignIn = () => {
+    const g = window.google && window.google.accounts && window.google.accounts.oauth2;
+    if (!GOOGLE_CLIENT_ID || !g) { this.showToast({ from: '⚠ Sign-in not ready', verb: '', prospectBrand: '', text: 'Reload the page and try again.' }); return; }
+    const client = g.initCodeClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/gmail.send openid email profile',
+      ux_mode: 'popup',
+      select_account: true,
+      callback: async (r) => {
+        if (r.error) { this.showToast({ from: '⚠ Sign-in cancelled', verb: '', prospectBrand: '', text: r.error }); return; }
+        try {
+          const me = await this.gmailFn({ action: 'connect', code: r.code });
+          const email = me.email;
+          const known = this.state.people.find(p => p.email && p.email.trim().toLowerCase() === email.toLowerCase());
+          const name = known ? known.name : (this.state.viewerName && !sameName(this.state.viewerName, 'You') ? this.state.viewerName : (me.name || email.split('@')[0]));
+          try { localStorage.setItem('atom-gmail', email); localStorage.setItem(VIEWER_KEY, name); } catch (e) {}
+          this.setState({ gmailEmail: email, viewerName: name });
+          this.setPersonEmail(name, email);
+          this.saved(name, 'Connected ' + email + ' — emails will now send automatically. No need to sign in again.');
+        } catch (e) {
+          const msg = /no_refresh/.test(e.message) ? 'Google didn\'t grant lasting access. Remove "Atom Prospects" at myaccount.google.com/permissions and sign in again.' : e.message;
+          this.showToast({ from: '⚠ Sign-in failed', verb: '', prospectBrand: '', text: msg });
+        }
+      },
+      error_callback: (e) => this.showToast({ from: '⚠ Sign-in failed', verb: 'from', prospectBrand: location.origin, text: ((e && e.type) === 'popup_closed' ? 'Google window was closed. If it said "origin_mismatch", add ' + location.origin + ' to Authorised JavaScript origins for client …lh7mk… and Save.' : ((e && e.type) || 'Popup closed')) })
+    });
+    this.showToast({ from: 'Google origin:', verb: '', prospectBrand: location.origin, text: 'This exact address must be in Authorised JavaScript origins for client …' + GOOGLE_CLIENT_ID.slice(13, 19) + '.' });
+    console.info('[gmail] origin', location.origin, 'client', GOOGLE_CLIENT_ID);
+    client.requestCode();
+  };
+  gmailSignOut = () => {
+    const email = this.state.gmailEmail;
+    try { localStorage.removeItem('atom-gmail'); } catch (e) {}
+    this.setState({ gmailEmail: '' });
+    if (email) this.gmailFn({ action: 'disconnect', from: email }).catch(() => {});
+  };
+  sendViaGmail = async (rcpts, subject, text) => {
+    try {
+      await this.gmailFn({ action: 'send', from: this.state.gmailEmail, fromName: this.state.viewerName || '', to: rcpts, subject, text });
+    } catch (e) {
+      if (/not_connected/.test(e.message)) { try { localStorage.removeItem('atom-gmail'); } catch (er) {} this.setState({ gmailEmail: '' }); }
+      throw e;
+    }
+  };
+  emailOf = (name) => { const p = this.state.people.find(x => sameName(x.name, name)); return p && p.email ? p.email.trim() : ''; };
+  canEdit = (p) => this.state.isMaster || !p || (!p.assignee && !p.createdBy) || this.namesOf(p.assignee).some(n => sameName(n, this.state.viewerName)) || sameName(p.createdBy, this.state.viewerName);
+  sendMail = (names, subject, body) => {
+    const mode = this.props.emailMode ?? 'auto';
+    if (mode === 'off') return;
+    const all = names.map(n => ({ name: n, email: this.emailOf(n) }));
+    const rcpts = all.filter(r => r.email);
+    const missing = all.filter(r => !r.email).map(r => r.name);
+    if (missing.length) setTimeout(() => this.showToast({ from: '⚠ No email', verb: 'for', prospectBrand: missing.join(', '), text: 'Add their email in Team so they get mail.' }), rcpts.length ? 2500 : 0);
+    if (!rcpts.length) return;
+    let link = ''; try { link = location.href.split('#')[0]; } catch (e) {}
+    const full = body + (link ? '\n\nOpen the board: ' + link : '');
+    const me = this.state.viewerName || 'You';
+    if (GOOGLE_CLIENT_ID && this.state.gmailEmail && mode !== 'mailto') {
+      this.sendViaGmail(rcpts, subject, full)
+        .then(() => this.showToast({ from: '✓ Email sent', verb: 'to', prospectBrand: rcpts.map(r => r.name).join(', '), text: 'From ' + this.state.gmailEmail }))
+        .catch(e => { console.warn('[gmail]', e.message); this.showToast({ from: '⚠ Email not sent', verb: 'to', prospectBrand: rcpts.map(r => r.name).join(', '), text: 'Sign in with Gmail again, then retry.' }); });
+      return;
+    }
+    if (GOOGLE_CLIENT_ID && !this.state.gmailEmail && mode !== 'mailto') {
+      this.showToast({ from: '⚠ Not signed in', verb: '', prospectBrand: '', text: 'Press "Sign in with Gmail" (top bar) so assignment emails go from your account.' });
+      return;
+    }
+    const ej = EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY;
+    if ((mode === 'auto' || mode === 'emailjs') && ej) {
+      rcpts.forEach(r => fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ service_id: EMAILJS_SERVICE_ID, template_id: EMAILJS_TEMPLATE_ID, user_id: EMAILJS_PUBLIC_KEY, template_params: { to_email: r.email, to_name: r.name, from_name: me, reply_to: this.emailOf(me) || '', subject, message: full, link } })
+      }).then(res => { if (!res.ok) res.text().then(t => console.warn('[emailjs]', t)); }).catch(e => console.warn('[emailjs]', e.message)));
+      this.showToast({ from: 'Email sent', verb: 'to', prospectBrand: rcpts.map(r => r.name).join(', '), text: subject });
+      return;
+    }
+    if (mode === 'server') {
+      if (this._sb) this._sb.from(MAIL_TABLE).insert(rcpts.map(r => ({ to_email: r.email, to_name: r.name, subject, body: full }))).then(({ error }) => { if (error) console.warn('[supabase mail]', error.message); });
+      return;
+    }
+    this.showToast({ from: 'Mail app opened', verb: 'for', prospectBrand: rcpts.map(r => r.name).join(', '), text: 'Press Send in your mail app. For automatic mail, add EmailJS keys.' });
+    try { window.location.href = 'mailto:' + rcpts.map(r => r.email).join(',') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(full); } catch (e) {}
+  };
+  toggleMaster = () => {
+    if (this.state.isMaster) { try { localStorage.removeItem(MASTER_KEY); } catch (e) {} this.setState({ isMaster: false }); }
+    else this.setState({ pinOpen: true, pinInput: '', pinError: false });
+  };
+  closePin = () => this.setState({ pinOpen: false });
+  setPinInput = (e) => this.setState({ pinInput: e.target.value, pinError: false });
+  unlockMaster = () => {
+    if (this.state.pinInput === MASTER_PIN) { try { localStorage.setItem(MASTER_KEY, '1'); } catch (e) {} this.setState({ isMaster: true, pinOpen: false, pinInput: '' }); }
+    else this.setState({ pinError: true });
+  };
+  pinKey = (e) => { if (e.key === 'Enter') this.unlockMaster(); };
+  openTeam = () => this.setState({ teamOpen: true, newPerson: { name: '', email: '' } });
+  closeTeam = () => {
+    if (Object.keys(this.state.emailDrafts).length && !window.confirm('You have unsaved emails. Close without saving?')) return;
+    this.setState({ teamOpen: false, emailDrafts: {} });
+  };
+  setNewPersonName = (e) => { const v = e.target.value; this.setState(s => ({ newPerson: { ...s.newPerson, name: v } })); };
+  setNewPersonEmail = (e) => { const v = e.target.value; this.setState(s => ({ newPerson: { ...s.newPerson, email: v } })); };
+  addPerson = () => {
+    const n = this.state.newPerson.name.trim(), em = this.state.newPerson.email.trim();
+    if (!n || !this.state.isMaster) return;
+    this.saved(n, 'Added to the team' + (em ? ' with ' + em : '') + '.');
+    this.setState(s => ({ newPerson: { name: '', email: '' }, people: s.people.some(p => sameName(p.name, n)) ? s.people.map(p => sameName(p.name, n) ? { ...p, email: em || p.email } : p) : [...s.people, { name: n, email: em }] }));
+  };
+  removePerson = (name) => { if (this.state.isMaster && window.confirm('Remove ' + name + ' from the team?')) this.setState(s => ({ people: s.people.filter(p => !sameName(p.name, name)) })); };
+  setPersonEmail = (name, email) => this.setState(s => ({ people: s.people.some(p => sameName(p.name, name)) ? s.people.map(p => sameName(p.name, name) ? { ...p, email } : p) : [...s.people, { name, email }] }));
+  setNewDeliverable = (e) => this.setState({ newDeliverable: e.target.value });
+  deliverableKey = (e) => { if (e.key === 'Enter') this.addDeliverable(); };
+  addDeliverable = () => {
+    const t = this.state.newDeliverable.trim(), id = this.state.selectedId;
+    if (!t || !id) return;
+    this.saved('Deliverable', t);
+    this.setState(s => ({ newDeliverable: '', prospects: s.prospects.map(p => p.id === id ? { ...p, deliverables: [...p.deliverables, { text: t, done: false }] } : p) }));
+  };
+  toggleDeliverable = (id, i) => this.setState(s => ({ prospects: s.prospects.map(p => p.id === id ? { ...p, deliverables: p.deliverables.map((d, j) => j === i ? { ...d, done: !d.done } : d) } : p) }));
+  removeDeliverable = (id, i) => this.setState(s => ({ prospects: s.prospects.map(p => p.id === id ? { ...p, deliverables: p.deliverables.filter((d, j) => j !== i) } : p) }));
+  setDocType = (e) => { const v = e.target.value; this.setState(s => ({ docDraft: { ...s.docDraft, type: v } })); };
+  setDocName = (e) => { const v = e.target.value; this.setState(s => ({ docDraft: { ...s.docDraft, name: v } })); };
+  setDocUrl = (e) => { const v = e.target.value; this.setState(s => ({ docDraft: { ...s.docDraft, url: v } })); };
+  onDocFile = (e) => { const f = e.target.files && e.target.files[0]; this._docFile = f || null; this.setState({ docFileName: f ? f.name : '', docError: '' }); };
+  addDoc = async () => {
+    const id = this.state.selectedId;
+    if (!id || this.state.uploading) return;
+    const d = this.state.docDraft;
+    let url = d.url.trim(), name = d.name.trim();
+    const f = this._docFile;
+    if (f) {
+      if (!this._sb) { this.setState({ docError: 'Board is offline — paste a link instead, or reload.' }); return; }
+      this.setState({ uploading: true, docError: '' });
+      const path = id + '/' + Date.now() + '-' + f.name.replace(/[^\w.\-]+/g, '_');
+      const { error } = await this._sb.storage.from(DOC_BUCKET).upload(path, f);
+      if (error) { this.setState({ uploading: false, docError: 'Upload failed: ' + error.message }); return; }
+      url = this._sb.storage.from(DOC_BUCKET).getPublicUrl(path).data.publicUrl;
+      if (!name) name = f.name;
+    }
+    if (!name && url) name = url.replace(/^https?:\/\//, '').split('/')[0];
+    if (!name) { this.setState({ docError: 'Add a name, a link or a file.' }); return; }
+    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    this.saved(name, 'Document added.');
+    const doc = { type: d.type, name, url, note: (this.state.viewerName || 'You') + ' · ' + new Date().toLocaleDateString() };
+    this._docFile = null;
+    this.setState(s => ({ uploading: false, docError: '', docFileName: '', docDraft: { ...s.docDraft, name: '', url: '' }, prospects: s.prospects.map(p => p.id === id ? { ...p, docs: [...p.docs, doc], lastUpdateLabel: 'Just now' } : p) }));
+  };
+  removeDoc = (id, i) => this.setState(s => ({ prospects: s.prospects.map(p => p.id === id ? { ...p, docs: p.docs.filter((d, j) => j !== i) } : p) }));
+  notifyAssigned = (names, p, extra) => {
+    const me = this.state.viewerName || 'You';
+    const to = names.filter(n => !sameName(n, me));
+    if (!to.length) return;
+    const now = Date.now();
+    const ns = to.map((name, i) => ({ id: now + '-' + i + '-' + Math.random().toString(36).slice(2, 7), kind: 'assign', to: name, from: me, prospectId: p.id, prospectBrand: p.brand, text: extra || ('You are on ' + p.brand + '.'), ts: now, read: false }));
+    ns.forEach(n => this._seen && this._seen.add(n.id));
+    this.setState(s => ({ notifications: [...ns, ...s.notifications] }));
+    this.sendMail(to, me + ' assigned you ' + p.brand, me + ' assigned you the prospect "' + p.brand + '" on Work in Prospects.' + (p.brief ? '\n\nBrief: ' + p.brief : ''));
+  };
+  changeAssignee = (p, value) => {
+    const before = this.namesOf(p.assignee);
+    this.updateField(p.id, 'assignee', value);
+    const added = this.namesOf(value).filter(n => !before.some(b => sameName(b, n)));
+    this.notifyAssigned(added, p);
+  };
+
+  setViewerName = (e) => {
+    const v = e.target.value;
+    try { localStorage.setItem(VIEWER_KEY, v); } catch (err) {}
+    this.setState({ viewerName: v });
+  };
+  setSearch = (e) => this.setState({ search: e.target.value });
+  setFilterAssignee = (e) => this.setState({ filterAssignee: e.target.value });
+  setFilterPriority = (e) => this.setState({ filterPriority: e.target.value });
+  setFilterTag = (e) => this.setState({ filterTag: e.target.value });
+  setViewBoard = () => this.setState({ view: 'board' });
+  setViewTable = () => this.setState({ view: 'table' });
+
+  openAdd = () => this.setState({ modalOpen: true, draft: emptyDraft() });
+  closeAdd = () => this.setState({ modalOpen: false });
+
+  setNewStageName = (e) => this.setState({ newStageName: e.target.value });
+  addStage = () => {
+    if (!this.state.isMaster) return;
+    const name = this.state.newStageName.trim();
+    if (!name || this.state.stages.includes(name)) return;
+    this.setState(s => ({ stages: [...s.stages, name], newStageName: '' }));
+  };
+  dropStage = (from, to) => {
+    if (!this.state.isMaster || !from || from === to) return;
+    this.setState(s => { const st = s.stages.filter(x => x !== from); const j = st.indexOf(to); const fi = s.stages.indexOf(from), ti = s.stages.indexOf(to); st.splice(fi < ti ? j + 1 : j, 0, from); return { stages: st }; });
+    this.saved(from, 'Stage moved.');
+  };
+  setStageRenameText = (e) => this.setState({ stageRenameText: e.target.value });
+  commitStageRename = () => {
+    const old = this.state.renamingStage; if (!old) return;
+    const n = String(this.state.stageRenameText ?? '').trim();
+    if (!n || n === old || !this.state.isMaster) { this.setState({ renamingStage: null }); return; }
+    if (this.state.stages.some(x => x !== old && x.toLowerCase() === n.toLowerCase())) { window.alert('A stage called "' + n + '" already exists.'); return; }
+    this.setState(s => ({ renamingStage: null, stages: s.stages.map(x => x === old ? n : x), prospects: s.prospects.map(p => p.stage === old ? { ...p, stage: n } : p) }));
+    this.saved(n, 'Stage renamed from ' + old + '.');
+  };
+  removeStage = (name) => {
+    if (!this.state.isMaster) return;
+    this.setState(s => ({ stages: s.stages.filter(st => st !== name) }));
+  };
+
+  registerPriority = (value) => {
+    const v = value.trim();
+    if (!v) return;
+    this.setState(s => s.priorities.includes(v) ? null : { priorities: [...s.priorities, v] });
+  };
+
+  setDraftBrand = (e) => this.setState(s => ({ draft: { ...s.draft, brand: e.target.value } }));
+  setDraftAssignee = (e) => this.setState(s => ({ draft: { ...s.draft, assignee: e.target.value } }));
+  setDraftPriority = (e) => { this.setState(s => ({ draft: { ...s.draft, priority: e.target.value } })); };
+  setDraftValue = (e) => this.setState(s => ({ draft: { ...s.draft, value: e.target.value } }));
+  setDraftContactPerson = (e) => this.setState(s => ({ draft: { ...s.draft, contactPerson: e.target.value } }));
+  setDraftContactEmail = (e) => this.setState(s => ({ draft: { ...s.draft, contactEmail: e.target.value } }));
+  setDraftSource = (e) => this.setState(s => ({ draft: { ...s.draft, source: e.target.value } }));
+  setDraftCategory = (e) => { const v = e.target.value; this.setState(s => ({ draft: { ...s.draft, category: v } })); };
+  setDraftBrief = (e) => { const v = e.target.value; this.setState(s => ({ draft: { ...s.draft, brief: v } })); };
+  setDraftScope = (e) => { const v = e.target.value; this.setState(s => ({ draft: { ...s.draft, scope: v } })); };
+  setDraftTags = (e) => this.setState(s => ({ draft: { ...s.draft, tags: e.target.value } }));
+  setDraftNextAction = (e) => this.setState(s => ({ draft: { ...s.draft, nextAction: e.target.value } }));
+  setDraftNextActionDue = (e) => this.setState(s => ({ draft: { ...s.draft, nextActionDue: e.target.value } }));
+
+  addProspect = () => {
+    const d = this.state.draft;
+    if (!d.brand.trim()) return;
+    const p = {
+      id: uid(), brand: d.brand, stage: 'New', assignee: d.assignee, priority: d.priority,
+      value: d.value, contactPerson: d.contactPerson, contactEmail: d.contactEmail, source: d.source, tags: d.tags, category: d.category, brief: d.brief, scope: d.scope, nextMilestone: d.nextAction || '', milestoneDate: d.nextActionDue || '', deliverables: [], createdBy: this.state.viewerName || 'You',
+      added: 'Today', lastUpdateLabel: 'Just now', stalled: false, docs: [],
+      updates: d.nextAction ? [{ author: this.state.viewerName || 'You', date: 'Just now', text: 'Next action: ' + d.nextAction + (d.nextActionDue ? ' by ' + d.nextActionDue : ''), system: true }] : []
+    };
+    this.setState(s => ({ prospects: [...s.prospects, p], nextId: s.nextId + 1, modalOpen: false, assignNewText: '' }));
+    this.saved(p.brand, 'New prospect added to the board.');
+    this.notifyAssigned(this.namesOf(d.assignee), p, d.nextAction ? 'Next action: ' + d.nextAction : 'New prospect added to ' + p.stage + '.');
+  };
+
+  openDrawer = (id) => { this._docFile = null; this.setState({ edits: {}, justSaved: false, delivDrafts: {}, docEdit: null, updEdit: null, selectedId: id, newUpdateText: '', newDeliverable: '', docDraft: { type: 'Brief', name: '', url: '' }, docFileName: '', docError: '' }); };
+  closeDrawer = () => this.setState({ selectedId: null });
+
+  updateField = (id, field, value) => {
+    this.setState(s => ({ prospects: s.prospects.map(p => p.id === id ? { ...p, [field]: value } : p) }));
+  };
+
+  setStage = (id, stage) => {
+    { const sp = this.state.prospects.find(x => x.id === id); if (sp && sp.stage !== stage) this.saved(sp.brand, 'Moved to ' + stage + '.'); }
+    this.setState(s => ({
+      prospects: s.prospects.map(p => {
+        if (p.id !== id || p.stage === stage) return p;
+        return { ...p, stage, lastUpdateLabel: 'Just now', updates: [...p.updates, { author: 'System', date: 'Just now', text: 'Moved from ' + p.stage + ' to ' + stage + '.', system: true }] };
+      })
+    }));
+  };
+
+  postUpdate = () => {
+    const text = this.state.newUpdateText.trim();
+    const id = this.state.selectedId;
+    if (!text || !id) return;
+    const me = this.state.viewerName || 'You';
+    const prospect = this.state.prospects.find(p => p.id === id);
+    const people = this.peopleList();
+    const tagged = [];
+    const re = /@([A-Za-z0-9_.\-]+)/g;
+    let m;
+    while ((m = re.exec(text))) {
+      const h = m[1].toLowerCase();
+      const person = people.find(p => p.toLowerCase() === h || p.toLowerCase().split(' ')[0] === h) || m[1];
+      if (!tagged.some(t => sameName(t, person)) && !sameName(person, me)) tagged.push(person);
+    }
+    const now = Date.now();
+    const notifs = tagged.map((to, i) => ({ id: now + '-' + i + '-' + Math.random().toString(36).slice(2, 7), kind: 'mention', to, from: me, prospectId: id, prospectBrand: prospect ? prospect.brand : '', text, ts: now, read: false }));
+    notifs.forEach(n => this._seen && this._seen.add(n.id));
+    this.setState(s => ({
+      prospects: s.prospects.map(p => p.id === id ? { ...p, lastUpdateLabel: 'Just now', updates: [{ author: me, date: 'Just now', text, system: false }, ...p.updates] } : p),
+      notifications: [...notifs, ...s.notifications],
+      people: tagged.reduce((acc, t) => acc.some(a => sameName(a.name, t)) ? acc : [...acc, { name: t, email: '' }], s.people),
+      newUpdateText: ''
+    }));
+    if (this.state.emailTagged && tagged.length) {
+      const brand = prospect ? prospect.brand : 'a prospect';
+      this.sendMail(tagged, me + ' tagged you on ' + brand, me + ' wrote on "' + brand + '":\n\n' + text);
+    }
+  };
+
+  removeSelected = () => {
+    if (!this.state.isMaster) return;
+    const id = this.state.selectedId;
+    const gone = this.state.prospects.find(p => p.id === id);
+    if (!window.confirm('Delete "' + (gone ? gone.brand : 'this prospect') + '" for everyone?')) return;
+    this.setState(s => ({ prospects: s.prospects.filter(p => p.id !== id), selectedId: null }));
+    this.saved(gone ? gone.brand : 'Prospect', 'deleted');
+  };
+
+  renderVals() {
+    if (!this._inited) setTimeout(() => this.init(), 0);
+    else setTimeout(() => this.maybePersist(), 0);
+    const accent = this.props.accent ?? '#2547f4';
+    const s = this.state;
+
+    const matches = (p) => {
+      const q = s.search.trim().toLowerCase();
+      if (q && !(p.brand.toLowerCase().includes(q) || p.contactPerson.toLowerCase().includes(q))) return false;
+      if (s.filterAssignee && !this.namesOf(p.assignee).some(n => sameName(n, s.filterAssignee))) return false;
+      if (s.filterPriority && p.priority !== s.filterPriority) return false;
+      if (s.filterCategory && p.category !== s.filterCategory) return false;
+      if (s.filterTag && !p.tags.toLowerCase().includes(s.filterTag.toLowerCase())) return false;
+      return true;
+    };
+
+    const isClosingStage = (st) => /won|lost/i.test(st);
+
+    const enrich = (p) => {
+      const stageIdx = s.stages.indexOf(p.stage);
+      const priIdx = s.priorities.indexOf(p.priority);
+      return {
+        ...p,
+        dotStyle: { background: colorForIndex(priIdx >= 0 ? priIdx : 0) },
+        badgeStyle: { background: hexToRgba(colorForIndex(stageIdx >= 0 ? stageIdx : 0), 0.12), color: colorForIndex(stageIdx >= 0 ? stageIdx : 0) },
+        valueDisplay: p.value ? ('\u20b9' + p.value) : '\u2014',
+        docsLabel: p.docs.length + (p.docs.length === 1 ? ' doc' : ' docs'),
+        updatesLabel: p.updates.length + (p.updates.length === 1 ? ' update' : ' updates'),
+        staleClass: p.stalled ? 'stale' : '',
+        cardClass: 'card' + (p.stalled ? ' stalled' : ''),
+        cardStyle: isClosingStage(p.stage) && /lost/i.test(p.stage) ? { opacity: 0.6 } : null,
+        rowStyle: p.stalled ? { boxShadow: 'inset 3px 0 0 #14161c' } : (/lost/i.test(p.stage) ? { opacity: 0.65 } : null),
+        hasBrief: !!String(p.brief ?? '').trim(),
+        hasMilestone: !!(String(p.nextMilestone ?? '').trim() || p.milestoneDate),
+        nextMilestone: p.nextMilestone || '',
+        msDateLabel: msInfo(p.milestoneDate).label, msClass: msInfo(p.milestoneDate).cls,
+        hasCategory: !!p.category,
+        catStyle: { background: hexToRgba(colorForIndex(Math.max(0, s.categories.indexOf(p.category))), 0.12), color: colorForIndex(Math.max(0, s.categories.indexOf(p.category))) },
+        open: () => this.openDrawer(p.id)
+      };
+    };
+
+    const filtered = s.prospects.filter(p => p.id === s.selectedId || p.id === this._keepId || matches(p)).map(enrich);
+    const activeFilters = [s.search.trim() && 'search', s.filterAssignee && 'assignee', s.filterPriority && 'priority', s.filterCategory && 'category', s.filterTag && 'tag'].filter(Boolean);
+
+    const orphans = filtered.filter(p => !s.stages.includes(p.stage));
+    const columns = s.stages.map((st, si) => {
+      const items = filtered.filter(p => p.stage === st);
+      return { name: st, items, count: items.length, isEmpty: items.length === 0, canRemove: s.prospects.filter(p => p.stage === st).length === 0 && s.stages.length > 1 && s.isMaster, remove: () => this.removeStage(st),
+        draggable: s.isMaster && s.renamingStage !== st,
+        onDragStart: (e) => { if (!s.isMaster) return; this._dragStage = st; try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/x-stage', st); } catch (er) {} },
+        onDragEnd: () => { this._dragStage = null; this.setState({ stageDropTarget: null }); },
+        onTouchStart: (e) => {
+          if (!s.isMaster || s.renamingStage === st) return;
+          const t = e.touches[0];
+          clearTimeout(this._press && this._press.timer);
+          this._press = { x: t.clientX, y: t.clientY, timer: setTimeout(() => {
+            this._press = null; this._touchStage = st; this._dragStage = st;
+            try { navigator.vibrate && navigator.vibrate(25); } catch (er) {}
+            this.setState({ touchMoving: st, stageDropTarget: st });
+            this.showToast({ from: 'Moving', verb: '', prospectBrand: st, text: 'Slide onto another column and let go.' });
+          }, 450) };
+        },
+        cancelPress: () => { if (this._press) { clearTimeout(this._press.timer); this._press = null; } },
+        onContextMenu: (e) => { if (s.isMaster) e.preventDefault(); },
+        onDragOver: (e) => { if (!this._dragStage) return; e.preventDefault(); if (s.stageDropTarget !== st) this.setState({ stageDropTarget: st }); },
+        onDrop: (e) => { if (!this._dragStage) return; e.preventDefault(); e.stopPropagation(); const from = this._dragStage; this._dragStage = null; this.setState({ stageDropTarget: null }); this.dropStage(from, st); },
+        colStyle: s.touchMoving === st ? { opacity: 0.55, transform: 'scale(0.97)', transition: 'transform .15s' } : (s.stageDropTarget === st && this._dragStage && this._dragStage !== st ? { outline: '2px dashed ' + accent, outlineOffset: '2px' } : null),
+        isEditing: s.renamingStage === st, notEditing: s.renamingStage !== st,
+        startRename: () => s.isMaster && this.setState({ renamingStage: st, stageRenameText: st }),
+        renameHint: s.isMaster ? 'Drag (or long-press on mobile) to reorder · double-click to rename' : '',
+        titleStyle: s.isMaster ? { cursor: 'grab', WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none' } : null,
+        renameKey: (e) => { if (e.key === 'Enter') this.commitStageRename(); if (e.key === 'Escape') this.setState({ renamingStage: null }); },
+        commitRename: () => this.commitStageRename() };
+    });
+    if (orphans.length && columns.length) {
+      const stub = Object.fromEntries(Object.entries(columns[0]).map(([k, v]) => [k, typeof v === 'function' ? () => {} : v]));
+      columns.unshift({ ...stub, name: 'No stage', items: orphans, count: orphans.length, isEmpty: false, canRemove: false, draggable: false,
+        isEditing: false, notEditing: true, renameHint: 'These prospects have a stage that no longer exists — open one and pick a stage.',
+        titleStyle: { color: '#a63244' }, colStyle: { background: '#fdf1f3', outline: '1px dashed #a63244' } });
+    }
+
+    const total = s.prospects.length;
+    const isWon = (p) => /\bwon\b|\bwin\b|closed.?won/i.test(p.stage || '');
+    const isLost = (p) => /\blost\b|\bloss\b|\blose\b|declin|reject|dropped|closed.?lost/i.test(p.stage || '');
+    const isParked = (p) => /pos?t?pon|on.?hold|parked|paused|later|deferred/i.test(p.stage || '');
+    const won = s.prospects.filter(isWon).length;
+    const lost = s.prospects.filter(p => !isWon(p) && isLost(p)).length;
+    const parked = s.prospects.filter(p => !isWon(p) && !isLost(p) && isParked(p)).length;
+    const active = total - won - lost - parked;
+    const stalled = s.prospects.filter(p => p.stalled && !isWon(p) && !isLost(p) && !isParked(p)).length;
+    const winRate = (won + lost) > 0 ? Math.round((won / (won + lost)) * 100) + '%' : '\u2014';
+    const winRateNote = (won + lost) > 0 ? won + ' won of ' + (won + lost) + ' decided' : 'No decided deals yet';
+
+    const assigneeOptions = this.peopleList();
+    const tagOptions = [...new Set(s.prospects.flatMap(p => p.tags.split(',').map(t => t.trim()).filter(Boolean)))].sort();
+
+    const rawSelected = s.selectedId ? s.prospects.find(p => p.id === s.selectedId) : null;
+    let selected = null;
+    if (rawSelected) {
+      const rid = rawSelected.id;
+      const canEdit = this.canEdit(rawSelected);
+      const on = (field) => (e) => this.setEdit(field, e.target.value);
+      const ed = s.edits || {};
+      const val = (k) => ed[k] !== undefined ? ed[k] : rawSelected[k];
+      const curAssignee = val('assignee');
+      const dirty = Object.keys(ed).some(k => ed[k] !== rawSelected[k]);
+      const docs = rawSelected.docs.map((d, i) => ({ ...d, type: d.type || 'Other', href: d.url || undefined, note: d.note || '', canRemove: canEdit, remove: () => window.confirm('Delete "' + d.name + '"?') && this.removeDoc(rid, i),
+        isEditing: !!(s.docEdit && s.docEdit.i === i), notEditing: !(s.docEdit && s.docEdit.i === i),
+        edit: () => this.setState({ docEdit: { i, type: d.type || 'Other', name: d.name || '', url: d.url || '' } }) }));
+      const deliverables = rawSelected.deliverables.map((d, i) => ({ ...d, done: !!d.done,
+        value: s.delivDrafts[i] !== undefined ? s.delivDrafts[i] : d.text,
+        onText: (e) => { const v = e.target.value; this.setState(st => ({ delivDrafts: { ...st.delivDrafts, [i]: v } })); },
+        commit: () => this.commitDeliv(rid, i),
+        onKey: (e) => { if (e.key === 'Enter') e.target.blur(); if (e.key === 'Escape') this.setState(st => { const d2 = { ...st.delivDrafts }; delete d2[i]; return { delivDrafts: d2 }; }); }, locked: !canEdit, canRemove: canEdit, textClass: d.done ? 'deliv-done' : '', toggle: () => canEdit && this.toggleDeliverable(rid, i), remove: () => this.removeDeliverable(rid, i) }));
+      const doneCount = deliverables.filter(d => d.done).length;
+      const briefDocs = docs.filter(d => /brief/i.test(d.type));
+      const otherDocs = docs.filter(d => !/brief/i.test(d.type));
+      selected = {
+        ...rawSelected,
+        brand: val('brand'), category: val('category'), brief: val('brief'), scope: val('scope'), priority: val('priority'), value: val('value'),
+        source: val('source'), contactPerson: val('contactPerson'), contactEmail: val('contactEmail'), tags: val('tags'),
+        nextMilestone: val('nextMilestone') || '', milestoneDate: val('milestoneDate') || '',
+        msHint: val('milestoneDate') ? msInfo(val('milestoneDate')).label : 'pick a date',
+        onNextMilestone: on('nextMilestone'), onMilestoneDate: on('milestoneDate'),
+        dirty, clean: !dirty,
+        saveStateText: dirty ? '● Unsaved changes' : (s.justSaved ? '✓ Saved · live for everyone' : 'All changes saved'),
+        saveStateClass: dirty ? 'save-state dirty' : 'save-state',
+        saveBtnLabel: dirty ? 'Save changes' : 'Saved',
+        canEdit, locked: !canEdit, canDelete: s.isMaster,
+        ownerLabel: rawSelected.assignee || rawSelected.createdBy || 'The owner',
+        briefDocs, otherDocs, briefDocsEmpty: !briefDocs.length, otherDocsEmpty: !otherDocs.length,
+        deliverables, delivProgress: deliverables.length ? doneCount + '/' + deliverables.length + ' done' : 'none yet',
+        updates: rawSelected.updates.map((u, i) => ({ ...u, className: 'comment' + (u.system ? ' system' : ''),
+          dateLabel: u.date + (u.edited ? ' · edited' : ''),
+          canEdit: !u.system && (s.isMaster || sameName(u.author, s.viewerName)),
+          isEditing: s.updEdit === i, notEditing: s.updEdit !== i,
+          edit: () => this.setState({ updEdit: i, updEditText: u.text }),
+          remove: () => this.removeUpd(rid, i) })),
+        updatesEmpty: rawSelected.updates.length === 0,
+        onBrand: on('brand'), onCategory: on('category'), onBrief: on('brief'), onScope: on('scope'),
+        assignChips: (() => { const cur = this.namesOf(curAssignee); const names = this.peopleList(); return names.map(name => ({ name, disabled: !canEdit, style: cur.some(c => sameName(c, name)) ? { background: accent, borderColor: accent, color: '#fff' } : null, toggle: () => canEdit && this.setEdit('assignee', this.toggleName(curAssignee, name)) })); })(),
+        assignNewKey: (e) => { if (e.key !== 'Enter') return; const v = s.assignNewText.trim(); if (!v) return; this.setState({ assignNewText: '' }); if (!this.namesOf(curAssignee).some(n => sameName(n, v))) this.setEdit('assignee', this.toggleName(curAssignee, v)); },
+        onPriority: on('priority'),
+        onValue: on('value'), onContactPerson: on('contactPerson'), onContactEmail: on('contactEmail'), onSource: on('source'), onTags: on('tags'),
+        pills: s.stages.map(st => ({
+          name: st, disabled: !canEdit,
+          onClick: () => canEdit && this.setStage(rid, st),
+          style: st === rawSelected.stage ? { background: accent, borderColor: accent, color: '#fff' } : null
+        }))
+      };
+    }
+
+    const myNotifs = s.notifications.filter(n => sameName(n.to, s.viewerName)).map(n => ({
+      ...n,
+      verb: n.kind === 'assign' ? 'assigned you' : 'tagged you on',
+      when: timeAgo(n.ts),
+      style: n.read ? null : { background: hexToRgba(accent, 0.06), borderColor: hexToRgba(accent, 0.35) },
+      open: () => this.openNotif(n)
+    }));
+    const unreadCount = myNotifs.filter(n => !n.read).length;
+    const mentionPeople = this.peopleList().filter(p => !sameName(p, s.viewerName)).map(name => ({ name, add: () => this.addMention(name) }));
+
+    return {
+      accent,
+      syncLabel: ({ live: 'Live · team sync on', connecting: 'Connecting…', error: 'Sync error', local: 'This browser only' })[s.syncStatus],
+      syncColor: ({ live: '#558a42', connecting: '#c9a82d', error: '#a63244', local: '#8a8e99' })[s.syncStatus],
+      syncHint: s.syncStatus === 'live' ? 'Tags and assignments reach teammates on any device.' : 'Add Supabase URL + anon key in Tweaks so tags reach teammates.',
+      myNotifs,
+      noNotifs: myNotifs.length === 0,
+      unreadCount,
+      hasUnread: unreadCount > 0,
+      notifsOpen: s.notifsOpen,
+      toggleNotifs: this.toggleNotifs,
+      markAllRead: this.markAllRead,
+      canEnableAlerts: s.alertPermission === 'default',
+      enableAlerts: this.enableAlerts,
+      viewerFirst: (s.viewerName || 'you').split(' ')[0],
+      registerViewer: this.registerViewer,
+      mgOpen: s.mgOpen, openMg: this.openMg, closeMg: this.closeMg,
+      mgTabs: [...Object.keys(MG).map(k => ({ label: MG[k].label, style: s.mgTab === k ? { background: accent, borderColor: accent, color: '#fff' } : null, select: () => this.setState({ mgTab: k, mgNew: '' }) })),
+        { label: 'Team', style: null, select: () => { this.setState({ mgOpen: false }); this.openTeam(); } }],
+      mgDesc: 'Add, rename or delete ' + MG[s.mgTab].label.toLowerCase() + '. Renaming updates every prospect that uses it.',
+      mgRows: s[s.mgTab].map(item => { const dk = s.mgTab + '|' + item, d = s.mgDrafts[dk]; const dirtyM = d !== undefined && d.trim() && d.trim() !== item; const n = this.mgCount(s.mgTab, item); const unit = s.mgTab === 'docTypes' ? ' doc' : ' prospect';
+        return { name: d !== undefined ? d : item, count: n + unit + (n === 1 ? '' : 's'), clean: !dirtyM, saveLabel: dirtyM ? 'Save' : '✓ Saved',
+          onName: (e) => { const v = e.target.value; this.setState(st => ({ mgDrafts: { ...st.mgDrafts, [dk]: v } })); },
+          onKey: (e) => { if (e.key === 'Enter') this.mgRename(s.mgTab, item); }, save: () => this.mgRename(s.mgTab, item), remove: () => this.mgRemove(s.mgTab, item) }; }),
+      mgEmpty: s[s.mgTab].length === 0,
+      mgAddPlaceholder: 'New ' + MG[s.mgTab].one,
+      mgNew: s.mgNew, setMgNew: (e) => this.setState({ mgNew: e.target.value }), mgNewKey: (e) => { if (e.key === 'Enter') this.mgAdd(); }, mgAdd: this.mgAdd,
+      docEdit: s.docEdit || { type: '', name: '', url: '' },
+      setDocEditType: (e) => { const v = e.target.value; this.setState(st => ({ docEdit: { ...st.docEdit, type: v } })); },
+      setDocEditName: (e) => { const v = e.target.value; this.setState(st => ({ docEdit: { ...st.docEdit, name: v } })); },
+      setDocEditUrl: (e) => { const v = e.target.value; this.setState(st => ({ docEdit: { ...st.docEdit, url: v } })); },
+      saveDocEdit: this.saveDocEdit, cancelDocEdit: () => this.setState({ docEdit: null }),
+      updEditText: s.updEditText, setUpdEditText: (e) => this.setState({ updEditText: e.target.value }),
+      saveUpdEdit: this.saveUpdEdit, cancelUpdEdit: () => this.setState({ updEdit: null }),
+      stageRenameText: s.stageRenameText, setStageRenameText: this.setStageRenameText,
+      gmailEnabled: !!GOOGLE_CLIENT_ID,
+      gmailLabel: s.gmailEmail ? '✓ ' + s.gmailEmail.split('@')[0] : 'Sign in with Gmail',
+      gmailTitle: s.gmailEmail ? 'Sending mail as ' + s.gmailEmail + ' — click to sign out' : 'Emails you trigger will be sent from your own Gmail',
+      gmailBtnStyle: s.gmailEmail ? null : { background: accent, borderColor: accent, color: '#fff' },
+      gmailClick: () => s.gmailEmail ? (window.confirm('Sign out of ' + s.gmailEmail + '?') && this.gmailSignOut()) : this.gmailSignIn(),
+      mentionPeople,
+      hasToast: !!s.toast,
+      toast: s.toast,
+      openToast: () => s.toast && this.openNotif(s.toast),
+      viewerName: s.viewerName,
+      setViewerName: this.setViewerName,
+      search: s.search,
+      setSearch: this.setSearch,
+      filterAssignee: s.filterAssignee,
+      setFilterAssignee: this.setFilterAssignee,
+      filterPriority: s.filterPriority,
+      setFilterPriority: this.setFilterPriority,
+      filterTag: s.filterTag,
+      setFilterTag: this.setFilterTag,
+      assigneeOptions,
+      tagOptions,
+      priorities: s.priorities,
+      isBoard: s.view === 'board',
+      isTable: s.view === 'table',
+      setViewBoard: this.setViewBoard,
+      setViewTable: this.setViewTable,
+      boardToggleStyle: s.view === 'board' ? { background: accent, color: '#fff' } : { background: '#fff', color: '#8a8e99' },
+      tableToggleStyle: s.view === 'table' ? { background: accent, color: '#fff' } : { background: '#fff', color: '#8a8e99' },
+      columns,
+      totalCount: s.prospects.length, shownCount: filtered.length, hiddenCount: s.prospects.length - filtered.length,
+      hasHidden: s.prospects.length > filtered.length && activeFilters.length > 0, activeFilters: activeFilters.join(', '),
+      clearFilters: () => this.setState({ search: '', filterAssignee: '', filterPriority: '', filterCategory: '', filterTag: '' }),
+      liveOpen: s.liveOpen, toggleLive: () => this.setState(st => ({ liveOpen: !st.liveOpen, liveSeenTs: Date.now() })),
+      liveItems: s.activity.slice(0, 60).map(a => ({ who: a.who, text: a.text, when: timeAgo(a.ts), cls: 'live-item' + (a.ts > s.liveSeenTs && !sameName(a.who, s.viewerName) ? ' live-new' : '') })),
+      liveEmpty: s.activity.length === 0,
+      liveCountLabel: (() => { const n = s.activity.filter(a => a.ts > s.liveSeenTs && !sameName(a.who, s.viewerName)).length; return n ? n + ' new' : (s.liveOpen ? 'Hide' : 'Show'); })(),
+      liveDotStyle: { background: s.syncStatus === 'live' ? '#1f9d55' : s.syncStatus === 'error' ? '#a63244' : '#c99a00' },
+      newStageName: s.newStageName,
+      setNewStageName: this.setNewStageName,
+      addStage: this.addStage,
+      filteredList: filtered,
+      stats: { total, active, won, lost, parked, winRate, winRateNote, stalled },
+      drawerOpen: !!selected,
+      selected,
+      stop: this.stop,
+      closeDrawer: this.closeDrawer,
+      newUpdateText: s.newUpdateText,
+      setNewUpdateText: (e) => this.setState({ newUpdateText: e.target.value }),
+      postUpdate: this.postUpdate,
+      removeSelected: this.removeSelected,
+      modalOpen: s.modalOpen,
+      openAdd: this.openAdd,
+      closeAdd: this.closeAdd,
+      draft: s.draft,
+      setDraftBrand: this.setDraftBrand,
+      setDraftAssignee: this.setDraftAssignee,
+      setDraftPriority: this.setDraftPriority,
+      setDraftValue: this.setDraftValue,
+      setDraftContactPerson: this.setDraftContactPerson,
+      setDraftContactEmail: this.setDraftContactEmail,
+      setDraftSource: this.setDraftSource,
+      setDraftTags: this.setDraftTags,
+      setDraftNextAction: this.setDraftNextAction,
+      setDraftNextActionDue: this.setDraftNextActionDue,
+      addProspect: this.addProspect,
+      categories: s.categories, docTypes: s.docTypes,
+      catOpen: s.catOpen, openCats: this.openCats, closeCats: this.closeCats,
+      newCatName: s.newCatName, setNewCatName: (e) => this.setState({ newCatName: e.target.value }), newCatKey: (e) => { if (e.key === 'Enter') this.addCategory(); }, addCategory: this.addCategory,
+      catRows: s.categories.map(c => { const d = s.catDrafts[c]; const dirtyC = d !== undefined && d.trim() && d.trim() !== c; const n = s.prospects.filter(p => p.category === c).length;
+        return { name: d !== undefined ? d : c, count: n + (n === 1 ? ' prospect' : ' prospects'), clean: !dirtyC, saveLabel: dirtyC ? 'Save' : '✓ Saved',
+          onName: (e) => { const v = e.target.value; this.setState(st => ({ catDrafts: { ...st.catDrafts, [c]: v } })); },
+          onKey: (e) => { if (e.key === 'Enter') this.renameCategory(c); }, save: () => this.renameCategory(c), remove: () => this.removeCategory(c) }; }),
+      catEmpty: s.categories.length === 0,
+      filterCategory: s.filterCategory, setFilterCategory: (e) => this.setState({ filterCategory: e.target.value }),
+      teamNames: this.peopleList(),
+      isMaster: s.isMaster, notMaster: !s.isMaster,
+      masterLabel: s.isMaster ? 'Master · on' : 'Master',
+      masterBtnStyle: s.isMaster ? { background: '#14161c', borderColor: '#14161c', color: '#fff' } : null,
+      toggleMaster: this.toggleMaster,
+      pinOpen: s.pinOpen, pinInput: s.pinInput, pinError: s.pinError, setPinInput: this.setPinInput, pinKey: this.pinKey, unlockMaster: this.unlockMaster, closePin: this.closePin,
+      teamOpen: s.teamOpen, openTeam: this.openTeam, closeTeam: this.closeTeam,
+      teamRows: this.peopleList().map(name => {
+        const canEditEmail = s.isMaster || sameName(name, s.viewerName);
+        const draft = s.emailDrafts[name]; const dirtyE = draft !== undefined && draft.trim() !== this.emailOf(name);
+        return { name, email: draft !== undefined ? draft : this.emailOf(name), canSave: canEditEmail, clean: !dirtyE, saveLabel: dirtyE ? 'Save' : (this.emailOf(name) ? '✓ Saved' : 'Save'),
+          onKey: (e) => { if (e.key === 'Enter') this.saveEmail(name); }, save: () => this.saveEmail(name), emailLocked: !canEditEmail,
+          nameValue: s.nameDrafts[name] !== undefined ? s.nameDrafts[name] : name,
+          onName: (e) => { const v = e.target.value; this.setState(st => ({ nameDrafts: { ...st.nameDrafts, [name]: v } })); },
+          commitName: () => this.renamePerson(name), nameKey: (e) => { if (e.key === 'Enter') e.target.blur(); }, canRemove: s.isMaster, youLabel: sameName(name, s.viewerName) ? '(you)' : '', onEmail: (e) => { const v = e.target.value; this.setState(st => ({ emailDrafts: { ...st.emailDrafts, [name]: v } })); }, remove: () => this.removePerson(name) };
+      }),
+      teamEmpty: this.peopleList().length === 0,
+      newPerson: s.newPerson, setNewPersonName: this.setNewPersonName, setNewPersonEmail: this.setNewPersonEmail, addPerson: this.addPerson,
+      newDeliverable: s.newDeliverable, setNewDeliverable: this.setNewDeliverable, deliverableKey: this.deliverableKey, addDeliverable: this.addDeliverable,
+      docDraft: s.docDraft, setDocType: this.setDocType, setDocName: this.setDocName, setDocUrl: this.setDocUrl, onDocFile: this.onDocFile, addDoc: this.addDoc,
+      docFileLabel: s.docFileName ? 'Attached: ' + s.docFileName : 'Or upload a file',
+      docBtnLabel: s.uploading ? 'Uploading…' : 'Add document',
+      docError: s.docError, hasDocError: !!s.docError,
+      emailEnabled: (this.props.emailMode ?? 'auto') !== 'off',
+      emailTagged: s.emailTagged, toggleEmailTagged: () => this.setState(st => ({ emailTagged: !st.emailTagged })),
+      assignNewText: s.assignNewText, setAssignNewText: this.setAssignNewText,
+      draftAssignChips: (() => { const cur = this.namesOf(s.draft.assignee); return [...new Set([...this.peopleList(), ...cur])].map(name => ({ name, style: cur.some(c => sameName(c, name)) ? { background: accent, borderColor: accent, color: '#fff' } : null, toggle: () => this.setState(st => ({ draft: { ...st.draft, assignee: this.toggleName(st.draft.assignee, name) } })) })); })(),
+      draftAssignNewKey: (e) => { if (e.key !== 'Enter') return; const v = s.assignNewText.trim(); if (!v) return; this.setState(st => ({ assignNewText: '', draft: { ...st.draft, assignee: this.namesOf(st.draft.assignee).some(n => sameName(n, v)) ? st.draft.assignee : this.toggleName(st.draft.assignee, v) } })); },
+      saveEdits: this.saveEdits, discardEdits: this.discardEdits, closeDrawerSafe: this.closeDrawerSafe,
+      setDraftCategory: this.setDraftCategory, setDraftBrief: this.setDraftBrief, setDraftScope: this.setDraftScope
+    };
+  }
+}
+</script>
+</body>
+</html>
