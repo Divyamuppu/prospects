@@ -15,6 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Prospects">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<script>addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__atomInstallEvt = e; });</script>
 <script>if ('serviceWorker' in navigator && /netlify\.app$|atomcontent\.in$|localhost/.test(location.hostname)) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));</script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -274,6 +275,9 @@
     <div class="topbar-actions">
       <sc-if value="{{gmailEnabled}}" hint-placeholder-val="{{false}}">
         <button class="topbar-btn" style="{{gmailBtnStyle}}" onClick="{{gmailClick}}" title="{{gmailTitle}}">{{gmailLabel}}</button>
+      </sc-if>
+      <sc-if value="{{showInstall}}" hint-placeholder-val="{{false}}">
+        <button class="topbar-btn" style="background:#14161c;border-color:#14161c;color:#fff;" onClick="{{installApp}}">⤓ Install app</button>
       </sc-if>
       <button class="topbar-btn" onClick="{{openTeam}}">Team</button>
       <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}"><button class="topbar-btn" onClick="{{openMg}}">Manage</button></sc-if>
@@ -914,6 +918,7 @@ class Component extends DCLogic {
     docDraft: { type: 'Brief', name: '', url: '' }, docFileName: '', docError: '', uploading: false,
     emailTagged: true,
     assignNewText: '',
+    canInstall: false, isStandalone: false,
     activity: [], deletedIds: [], liveOpen: (typeof window !== 'undefined' && window.innerWidth > 700), liveSeenTs: Date.now(),
     renamingStage: null, stageRenameText: '', stageDropTarget: null, touchMoving: null,
     gmailEmail: (() => { try { return localStorage.getItem('atom-gmail') || ''; } catch (e) { return ''; } })(),
@@ -923,6 +928,13 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
+    const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    this.setState({ isStandalone: !!standalone });
+    if (window.__atomInstallEvt) this.setState({ canInstall: true });
+    this._bip = (e) => { e.preventDefault(); window.__atomInstallEvt = e; this.setState({ canInstall: true }); };
+    this._installed = () => { window.__atomInstallEvt = null; this.setState({ canInstall: false, isStandalone: true }); this.showToast({ from: '✓ Installed', verb: '', prospectBrand: 'Prospects', text: 'Open it from your apps / home screen.' }); };
+    window.addEventListener('beforeinstallprompt', this._bip);
+    window.addEventListener('appinstalled', this._installed);
     this._tMove = (e) => {
       const t = e.touches && e.touches[0]; if (!t) return;
       if (this._press && !this._touchStage) {
@@ -1101,6 +1113,8 @@ class Component extends DCLogic {
     });
   }
   componentWillUnmount() {
+    window.removeEventListener('beforeinstallprompt', this._bip);
+    window.removeEventListener('appinstalled', this._installed);
     document.removeEventListener('touchmove', this._tMove);
     document.removeEventListener('touchend', this._tEnd);
     document.removeEventListener('touchcancel', this._tEnd);
@@ -1328,6 +1342,17 @@ class Component extends DCLogic {
   };
 
   stop = (e) => { e.stopPropagation(); };
+  installApp = async () => {
+    const evt = window.__atomInstallEvt;
+    if (evt) { evt.prompt(); try { await evt.userChoice; } catch (e) {} window.__atomInstallEvt = null; this.setState({ canInstall: false }); return; }
+    const ua = navigator.userAgent;
+    const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const safari = /Safari/.test(ua) && !/Chrome|CriOS|Edg|FxiOS|Android/.test(ua);
+    const msg = ios ? (safari ? 'Tap the Share button (□↑) at the bottom, then "Add to Home Screen".' : 'Open this site in Safari, tap Share (□↑), then "Add to Home Screen".')
+      : safari ? 'In Safari: File menu → "Add to Dock…".'
+      : 'In Chrome/Edge: click the install icon (⊕) at the right of the address bar, or ⋮ menu → "Cast, save and share" → "Install page as app…". If you don\'t see it, reload once.';
+    this.showToast({ from: 'Install app', verb: '', prospectBrand: '', text: msg });
+  };
   gmailFn = async (body) => {
     if (!this._sb) throw new Error('Board not connected');
     let data, error;
@@ -1814,6 +1839,7 @@ class Component extends DCLogic {
       enableAlerts: this.enableAlerts,
       viewerFirst: (s.viewerName || 'you').split(' ')[0],
       registerViewer: this.registerViewer,
+      showInstall: !s.isStandalone, installApp: this.installApp,
       mgOpen: s.mgOpen, openMg: this.openMg, closeMg: this.closeMg,
       mgTabs: [...Object.keys(MG).map(k => ({ label: MG[k].label, style: s.mgTab === k ? { background: accent, borderColor: accent, color: '#fff' } : null, select: () => this.setState({ mgTab: k, mgNew: '' }) })),
         { label: 'Team', style: null, select: () => { this.setState({ mgOpen: false }); this.openTeam(); } }],
