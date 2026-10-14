@@ -15,6 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Prospects">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<script>(function(){function kill(){document.querySelectorAll('body > *:not(x-dc):not(script):not(style):not(link)').forEach(function(el){var t=(el.innerText||'')+' '+(el.innerHTML||'').slice(0,2000);if(/netlify/i.test(t)&&!el.querySelector('.kanban')){el.remove();}});document.querySelectorAll('a[href*="netlify.com"],iframe[src*="netlify"],[id*="netlify"],[class*="netlify"]').forEach(function(el){el.remove();});}new MutationObserver(kill).observe(document.documentElement,{childList:true,subtree:true});addEventListener('load',kill);})();</script>
 <script>addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__atomInstallEvt = e; });</script>
 <script>if ('serviceWorker' in navigator && /netlify\.app$|atomcontent\.in$|localhost/.test(location.hostname)) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));</script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -264,6 +265,49 @@
     .team-add{grid-template-columns:1fr;}
     .deliv-item input,.check-row input{width:22px;height:22px;}
   }
+  .m-only{display:none !important;}
+  .m-nav{position:fixed;left:0;right:0;bottom:0;z-index:45;background:rgba(255,255,255,0.96);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-top:1px solid #e4e6ec;padding:6px 6px calc(6px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);}
+  .m-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;border:none;background:transparent;font-family:'League Spartan',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.02em;color:#4b4f5a;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .m-tab svg{width:22px;height:22px;}
+  .m-badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;color:#fff;font-size:10px;line-height:16px;text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;}
+  .m-fab{position:fixed;right:18px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:46;width:58px;height:58px;border-radius:18px;border:none;color:#fff;font-size:28px;line-height:1;box-shadow:0 10px 24px rgba(37,71,244,0.32);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .m-stages{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -14px 12px;padding:10px 14px;background:rgba(255,255,255,0.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #eef0f4;}
+  .m-stages::-webkit-scrollbar{display:none;}
+  .m-stage{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;border:1px solid #d3d6e0;background:#fff;color:#14161c;font-family:'League Spartan',sans-serif;font-weight:600;font-size:13px;white-space:nowrap;cursor:pointer;}
+  .m-stage-count{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;opacity:0.75;}
+  .m-sheet-scrim{position:fixed;inset:0;z-index:60;background:rgba(20,22,28,0.38);display:flex;align-items:flex-end;}
+  .m-sheet{width:100%;max-height:88vh;overflow-y:auto;background:#fff;border-radius:18px 18px 0 0;padding:8px 18px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(20,22,28,0.16);}
+  .m-grab{width:40px;height:4px;border-radius:2px;background:#d3d6e0;margin:4px auto 12px;}
+  .m-sheet-title{font-family:'League Spartan',sans-serif;font-weight:700;font-size:20px;margin:0 0 12px;color:#14161c;}
+  .m-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:52px;padding:0 4px;border:none;border-bottom:1px solid #eef0f4;background:transparent;font-family:'Montserrat',sans-serif;font-size:15px;color:#14161c;text-align:left;cursor:pointer;}
+  .m-row-sub{font-size:12px;color:#4b4f5a;white-space:nowrap;flex-shrink:0;}
+  .card-foot > *,.card-meta > *{white-space:nowrap;}
+  @media (max-width:700px){
+    html,body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}
+    .m-only{display:flex !important;}
+    .m-nav.m-only{display:grid !important;}
+    .live{display:none !important;}
+    .stage{padding:12px 14px calc(150px + env(safe-area-inset-bottom)) !important;}
+    .topbar{flex-direction:row !important;align-items:center !important;flex-wrap:nowrap !important;margin-bottom:12px !important;gap:10px !important;}
+    .topbar-actions{width:auto !important;flex-wrap:nowrap !important;}
+    .topbar-actions > *:not(.notif-wrap){display:none !important;}
+    .stats-row{flex-wrap:nowrap !important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:8px !important;background:transparent !important;border:none !important;margin:0 -14px 12px !important;padding:0 14px;}
+    .stats-row::-webkit-scrollbar{display:none;}
+    .stat-tile{flex:0 0 auto !important;min-width:96px;border:1px solid #e4e6ec;border-radius:12px;padding:10px 14px !important;}
+    .stat-value{font-size:20px !important;}
+    .controls-row{gap:8px !important;margin-bottom:4px !important;}
+    .search-input{flex:1 1 100% !important;border-radius:12px !important;}
+    .filter-select{flex:1 1 calc(50% - 4px) !important;min-height:40px !important;font-size:13px !important;border-radius:10px !important;}
+    .view-toggle{display:none !important;}
+    .kanban{display:block !important;overflow:visible !important;margin:0 !important;padding:0 !important;scroll-snap-type:none !important;}
+    .col{width:auto !important;flex:none !important;background:transparent !important;padding:0 !important;border:none !important;}
+    .col-off{display:none !important;}
+    .add-col{display:none !important;}
+    .col-head{display:none !important;}
+    .card{padding:14px 16px !important;border-radius:14px !important;margin-bottom:10px !important;}
+    .toast{bottom:calc(90px + env(safe-area-inset-bottom)) !important;}
+    .notif-panel{z-index:47 !important;top:auto !important;bottom:calc(76px + env(safe-area-inset-bottom)) !important;max-height:70vh;overflow-y:auto;border-radius:16px !important;}
+  }
 </style>
 </helmet>
 <div class="stage">
@@ -367,9 +411,14 @@
   </sc-if>
 
   <sc-if value="{{isBoard}}" hint-placeholder-val="{{true}}">
-    <div class="kanban">
+    <div class="m-stages m-only">
       <sc-for list="{{columns}}" as="col" hint-placeholder-count="6">
-        <div class="col" data-stage="{{col.name}}" style="{{col.colStyle}}" onDragOver="{{col.onDragOver}}" onDrop="{{col.onDrop}}">
+        <button class="m-stage" style="{{col.mTabStyle}}" onClick="{{col.mSelect}}">{{col.name}}<span class="m-stage-count">{{col.count}}</span></button>
+      </sc-for>
+    </div>
+    <div class="kanban" onTouchStart="{{kanbanTouchStart}}" onTouchEnd="{{kanbanTouchEnd}}">
+      <sc-for list="{{columns}}" as="col" hint-placeholder-count="6">
+        <div class="{{col.mClass}}" data-stage="{{col.name}}" style="{{col.colStyle}}" onDragOver="{{col.onDragOver}}" onDrop="{{col.onDrop}}">
           <div class="col-head" style="gap:8px;" draggable="{{col.draggable}}" onDragStart="{{col.onDragStart}}" onDragEnd="{{col.onDragEnd}}" onTouchStart="{{col.onTouchStart}}" onTouchEnd="{{col.cancelPress}}" onContextMenu="{{col.onContextMenu}}">
             <sc-if value="{{col.isEditing}}" hint-placeholder-val="{{false}}">
               <input class="col-rename" value="{{stageRenameText}}" onChange="{{setStageRenameText}}" onKeyDown="{{col.renameKey}}" onBlur="{{col.commitRename}}" autoFocus="{{true}}">
@@ -673,6 +722,58 @@
   </div>
 </sc-if>
 
+<button class="m-fab m-only" style="{{mFabStyle}}" onClick="{{openAdd}}" aria-label="Add prospect">+</button>
+
+<nav class="m-nav m-only">
+  <button class="m-tab" style="{{mNavBoardStyle}}" onClick="{{mGoBoard}}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"></rect><rect x="10" y="4" width="5" height="11" rx="1.5"></rect><rect x="17" y="4" width="4" height="7" rx="1.5"></rect></svg>
+    <span>Board</span>
+  </button>
+  <button class="m-tab" style="{{mNavActivityStyle}}" onClick="{{mGoActivity}}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg>
+    <span>Activity</span>
+    <sc-if value="{{hasLiveNew}}" hint-placeholder-val="{{false}}"><span class="m-badge" style="background:{{accent}}">{{liveNewCount}}</span></sc-if>
+  </button>
+  <button class="m-tab" style="{{mNavAlertsStyle}}" onClick="{{toggleNotifs}}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+    <span>Alerts</span>
+    <sc-if value="{{hasUnread}}" hint-placeholder-val="{{false}}"><span class="m-badge" style="background:#a63244">{{unreadCount}}</span></sc-if>
+  </button>
+  <button class="m-tab" style="{{mNavMoreStyle}}" onClick="{{mGoMore}}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle></svg>
+    <span>More</span>
+  </button>
+</nav>
+
+<sc-if value="{{mActivityOpen}}" hint-placeholder-val="{{false}}">
+  <div class="m-sheet-scrim" onClick="{{mCloseSheets}}">
+    <div class="m-sheet" onClick="{{stop}}">
+      <div class="m-grab"></div>
+      <h2 class="m-sheet-title">Live activity</h2>
+      <sc-for list="{{liveItems}}" as="a" hint-placeholder-count="0">
+        <div class="{{a.cls}}" style="padding:12px 2px;font-size:14px;"><div><strong>{{a.who}}</strong> {{a.text}}</div><div class="live-meta">{{a.when}}</div></div>
+      </sc-for>
+      <sc-if value="{{liveEmpty}}" hint-placeholder-val="{{true}}"><div class="empty">No activity yet.</div></sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{mMoreOpen}}" hint-placeholder-val="{{false}}">
+  <div class="m-sheet-scrim" onClick="{{mCloseSheets}}">
+    <div class="m-sheet" onClick="{{stop}}">
+      <div class="m-grab"></div>
+      <h2 class="m-sheet-title">More</h2>
+      <div class="field" style="margin-bottom:8px;"><span class="field-label">Posting as</span><input class="field-input" value="{{viewerName}}" onChange="{{setViewerName}}" onBlur="{{registerViewer}}"></div>
+      <sc-if value="{{showInstall}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{installApp}}"><span>Install app</span><span class="m-row-sub">Home screen</span></button></sc-if>
+      <sc-if value="{{gmailEnabled}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{gmailClick}}"><span>{{gmailLabel}}</span><span class="m-row-sub">Gmail</span></button></sc-if>
+      <button class="m-row" onClick="{{mOpenTeam}}"><span>Team</span><span class="m-row-sub">People &amp; emails</span></button>
+      <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{mOpenMg}}"><span>Manage</span><span class="m-row-sub">Stages, categories…</span></button></sc-if>
+      <button class="m-row" onClick="{{mToggleMaster}}"><span>{{masterLabel}}</span><span class="m-row-sub">Edit access</span></button>
+      <button class="m-row" onClick="{{mToggleView}}"><span>{{mViewLabel}}</span><span class="m-row-sub">View</span></button>
+    </div>
+  </div>
+</sc-if>
+
 <div class="live">
   <div class="live-head" onClick="{{toggleLive}}">
     <span class="live-dot" style="{{liveDotStyle}}"></span>
@@ -919,6 +1020,7 @@ class Component extends DCLogic {
     emailTagged: true,
     assignNewText: '',
     canInstall: false, isStandalone: false,
+    mStage: null, mActivityOpen: false, mMoreOpen: false,
     activity: [], deletedIds: [], liveOpen: (typeof window !== 'undefined' && window.innerWidth > 700), liveSeenTs: Date.now(),
     renamingStage: null, stageRenameText: '', stageDropTarget: null, touchMoving: null,
     gmailEmail: (() => { try { return localStorage.getItem('atom-gmail') || ''; } catch (e) { return ''; } })(),
@@ -1305,7 +1407,7 @@ class Component extends DCLogic {
     if (typeof Notification === 'undefined') return;
     try { Promise.resolve(Notification.requestPermission()).then(p => this.setState({ alertPermission: p })).catch(() => this.setState({ alertPermission: 'denied' })); } catch (e) {}
   };
-  toggleNotifs = () => this.setState(s => ({ notifsOpen: !s.notifsOpen }));
+  toggleNotifs = () => this.setState(s => ({ notifsOpen: !s.notifsOpen, mActivityOpen: false, mMoreOpen: false }));
   openNotif = (n) => {
     this.setState(s => ({
       notifications: s.notifications.map(x => x.id === n.id ? { ...x, read: true } : x),
@@ -1735,12 +1837,18 @@ class Component extends DCLogic {
         renameKey: (e) => { if (e.key === 'Enter') this.commitStageRename(); if (e.key === 'Escape') this.setState({ renamingStage: null }); },
         commitRename: () => this.commitStageRename() };
     });
+    const mActive = columns.some(c => c.name === s.mStage) ? s.mStage : (orphans.length ? 'No stage' : (columns[0] && columns[0].name));
+    const decorate = (c) => ({ ...c, mClass: 'col' + (c.name === mActive ? '' : ' col-off'),
+      mTabStyle: c.name === mActive ? { background: accent, borderColor: accent, color: '#fff' } : null,
+      mSelect: () => { this.setState({ mStage: c.name }); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} } });
     if (orphans.length && columns.length) {
       const stub = Object.fromEntries(Object.entries(columns[0]).map(([k, v]) => [k, typeof v === 'function' ? () => {} : v]));
       columns.unshift({ ...stub, name: 'No stage', items: orphans, count: orphans.length, isEmpty: false, canRemove: false, draggable: false,
         isEditing: false, notEditing: true, renameHint: 'These prospects have a stage that no longer exists — open one and pick a stage.',
         titleStyle: { color: '#a63244' }, colStyle: { background: '#fdf1f3', outline: '1px dashed #a63244' } });
     }
+    for (let i = 0; i < columns.length; i++) columns[i] = decorate(columns[i]);
+    this._mStages = columns.map(c => c.name); this._mActive = mActive;
 
     const total = s.prospects.length;
     const isWon = (p) => /\bwon\b|\bwin\b|closed.?won/i.test(p.stage || '');
@@ -1840,6 +1948,32 @@ class Component extends DCLogic {
       viewerFirst: (s.viewerName || 'you').split(' ')[0],
       registerViewer: this.registerViewer,
       showInstall: !s.isStandalone, installApp: this.installApp,
+      kanbanTouchStart: (e) => { const t = e.touches[0]; this._sw = { x: t.clientX, y: t.clientY, t: Date.now() }; },
+      kanbanTouchEnd: (e) => {
+        const st = this._sw; this._sw = null;
+        if (!st || this._touchStage || window.innerWidth > 700) return;
+        const t = e.changedTouches[0], dx = t.clientX - st.x, dy = t.clientY - st.y;
+        if (Math.abs(dx) < 70 || Math.abs(dy) > 50 || Date.now() - st.t > 600) return;
+        const list = this._mStages || [], i = list.indexOf(this._mActive), j = dx < 0 ? i + 1 : i - 1;
+        if (j >= 0 && j < list.length) this.setState({ mStage: list[j] });
+      },
+      mNavBoardStyle: !s.mActivityOpen && !s.mMoreOpen && !s.notifsOpen ? { color: accent } : null,
+      mNavActivityStyle: s.mActivityOpen ? { color: accent } : null,
+      mNavAlertsStyle: s.notifsOpen ? { color: accent } : null,
+      mNavMoreStyle: s.mMoreOpen ? { color: accent } : null,
+      mGoBoard: () => this.setState({ mActivityOpen: false, mMoreOpen: false, notifsOpen: false, view: 'board' }),
+      mGoActivity: () => this.setState({ mActivityOpen: true, mMoreOpen: false, notifsOpen: false, liveSeenTs: Date.now() }),
+      mGoMore: () => this.setState({ mMoreOpen: true, mActivityOpen: false, notifsOpen: false }),
+      mCloseSheets: () => this.setState({ mActivityOpen: false, mMoreOpen: false }),
+      mActivityOpen: s.mActivityOpen, mMoreOpen: s.mMoreOpen,
+      mFabStyle: (s.notifsOpen || s.mActivityOpen || s.mMoreOpen) ? { background: accent, display: 'none' } : { background: accent },
+      mOpenTeam: () => { this.setState({ mMoreOpen: false }); this.openTeam(); },
+      mOpenMg: () => { this.setState({ mMoreOpen: false }); this.openMg(); },
+      mToggleMaster: () => { this.setState({ mMoreOpen: false }); this.toggleMaster(); },
+      mToggleView: () => this.setState(st => ({ view: st.view === 'board' ? 'table' : 'board', mMoreOpen: false })),
+      mViewLabel: s.view === 'board' ? 'Switch to table view' : 'Switch to board view',
+      liveNewCount: s.activity.filter(a => a.ts > s.liveSeenTs && !sameName(a.who, s.viewerName)).length,
+      hasLiveNew: s.activity.some(a => a.ts > s.liveSeenTs && !sameName(a.who, s.viewerName)),
       mgOpen: s.mgOpen, openMg: this.openMg, closeMg: this.closeMg,
       mgTabs: [...Object.keys(MG).map(k => ({ label: MG[k].label, style: s.mgTab === k ? { background: accent, borderColor: accent, color: '#fff' } : null, select: () => this.setState({ mgTab: k, mgNew: '' }) })),
         { label: 'Team', style: null, select: () => { this.setState({ mgOpen: false }); this.openTeam(); } }],
