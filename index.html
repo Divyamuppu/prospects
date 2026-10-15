@@ -535,6 +535,50 @@
     .m-tab[style*="color"]{color:#ffffff !important;}
     .m-fab{background:#2547f4 !important;}
   }
+
+  /* ===== Prospect window redesign ===== */
+  .lock-note{display:flex;align-items:center;gap:8px;font-size:12.5px;background:#f1f2f7;border-radius:12px;padding:10px 12px;}
+  .lock-ico{font-size:13px;}
+  .stage-track{flex-wrap:nowrap !important;overflow-x:auto;scrollbar-width:none;padding:2px 0;}
+  .stage-track::-webkit-scrollbar{display:none;}
+  .stage-track .pill{flex:0 0 auto;white-space:nowrap;}
+  .tab-chat{gap:0 !important;}
+  .tab-chat > .section{border-top:none !important;padding:4px 0 16px !important;gap:10px !important;background:transparent !important;}
+  .tab-chat .comment{background:#f5f6fa !important;border:none !important;border-radius:16px 16px 16px 6px !important;padding:12px 14px !important;margin:0 !important;max-width:640px;}
+  .chat-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:40px 16px;color:#5b6178;font-size:13.5px;}
+  .chat-empty strong{font-family:'League Spartan',sans-serif;font-size:17px;color:#0e1330;}
+  .composer{position:sticky;bottom:-110px;z-index:6;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:12px;background:#fff;border:1px solid #e4e6ec;border-radius:20px;box-shadow:0 -6px 24px rgba(14,19,48,0.08);}
+  .composer-tags{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;}
+  .composer-tags::-webkit-scrollbar{display:none;}
+  .composer-tag{flex:0 0 auto;padding:7px 12px;border-radius:999px;border:1px solid #e4e6ec;background:#f7f8fb;font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:600;color:#3d414b;cursor:pointer;white-space:nowrap;}
+  .composer-tag:hover,.composer-tag:active{border-color:#2547f4;color:#2547f4;background:#eef1fe;}
+  .composer-row{display:flex;align-items:flex-end;gap:10px;}
+  .composer-input{flex:1;min-width:0;min-height:48px;max-height:180px;resize:none;padding:12px 14px;border:1px solid #e4e6ec;border-radius:16px;background:#f7f8fb;font-family:'Montserrat',sans-serif;font-size:15px;line-height:1.45;color:#14161c;field-sizing:content;}
+  .composer-input:focus{outline:none;border-color:#2547f4;background:#fff;box-shadow:0 0 0 3px rgba(37,71,244,0.12);}
+  .composer-send{flex:0 0 auto;display:flex;align-items:center;gap:6px;height:48px;padding:0 18px;border:none;border-radius:16px;color:#fff;font-family:'League Spartan',sans-serif;font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 6px 16px rgba(37,71,244,0.3);}
+  .composer-email{display:flex;align-items:center;gap:8px;font-size:12px;color:#5b6178;cursor:pointer;padding:0 2px;}
+  .composer-email input{width:16px;height:16px;accent-color:#2547f4;}
+  .drawer:has(.tab-chat) .composer{bottom:0;margin-top:auto;}
+  .drawer:has(.tab-chat){padding-bottom:0 !important;}
+  .tab-chat{flex:1 0 auto;display:flex !important;flex-direction:column;}
+  .composer-email span{white-space:nowrap;flex:1;}
+  @media (max-width:700px){
+    .drawer{padding:0 0 110px !important;background:#ffffff !important;gap:14px !important;}
+    .drawer:has(.tab-chat){padding-bottom:0 !important;}
+    .drawer > *:not(.drawer-head):not(.composer){margin-left:16px;margin-right:16px;}
+    .drawer-head{background:#0e1330;color:#fff;padding:calc(16px + env(safe-area-inset-top)) 16px 18px;border-radius:0 0 22px 22px;align-items:center !important;}
+    .drawer-brand{color:#fff !important;font-size:22px !important;line-height:1.15;}
+    .drawer-sub{color:#9aa5d1 !important;font-size:12px !important;}
+    .drawer-head .icon-btn{background:rgba(255,255,255,0.10) !important;border-color:rgba(255,255,255,0.16) !important;color:#fff !important;border-radius:12px !important;}
+    .dtabs{top:0 !important;}
+    .tab-chat > .section{padding-bottom:12px !important;}
+    .composer{margin:0 !important;border-radius:20px 20px 0 0 !important;border:none !important;border-top:1px solid #eceef3 !important;padding:10px 12px calc(10px + env(safe-area-inset-bottom)) !important;box-shadow:0 -8px 24px rgba(14,19,48,0.10) !important;}
+    .composer-input{font-size:16px !important;}
+    .composer-send span{display:none;}
+    .composer-send{width:48px;padding:0;justify-content:center;border-radius:50%;}
+    .stage-track{margin:0 -16px !important;padding:2px 16px !important;}
+    .footer-remove{padding-bottom:24px;}
+  }
 </style>
 </helmet>
 <div class="stage">
@@ -730,7 +774,7 @@
         <button class="icon-btn" onClick="{{closeDrawerSafe}}" aria-label="Close">×</button>
       </div>
       <sc-if value="{{selected.locked}}" hint-placeholder-val="{{false}}">
-        <div class="lock-note">View only. {{selected.ownerLabel}} or a master can edit this prospect. You can still add docs and post updates.</div>
+        <div class="lock-note"><span class="lock-ico">🔒</span><span>View only · {{selected.ownerLabel}} can edit. You can still post updates and add docs.</span></div>
       </sc-if>
 
       <div class="stage-track">
@@ -823,7 +867,6 @@
       </div>
       <div class="{{tabUpdatesCls}}">
       <div class="section">
-        <h3 class="section-title">Updates</h3>
         <sc-for list="{{selected.updates}}" as="u" hint-placeholder-count="0">
           <div class="{{u.className}}">
             <div class="comment-head"><span class="comment-author">{{u.author}}</span><span style="display:flex;align-items:center;gap:4px;">{{u.dateLabel}}<sc-if value="{{u.canEdit}}" hint-placeholder-val="{{false}}"><button class="row-edit" onClick="{{u.edit}}">Edit</button><button class="row-remove" style="margin-left:0" onClick="{{u.remove}}" aria-label="Delete">×</button></sc-if></span></div>
@@ -831,19 +874,25 @@
             <sc-if value="{{u.isEditing}}" hint-placeholder-val="{{false}}"><div class="edit-box"><textarea class="field-input field-textarea" rows="2" value="{{updEditText}}" onChange="{{setUpdEditText}}"></textarea><div class="edit-actions"><button class="btn-ghost" onClick="{{cancelUpdEdit}}">Cancel</button><button class="mini-save" style="background:{{accent}}" onClick="{{saveUpdEdit}}">Save</button></div></div></sc-if>
           </div>
         </sc-for>
-        <sc-if value="{{selected.updatesEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No updates yet.</div></sc-if>
-        <div class="post-row">
-          <textarea class="post-input post-area" rows="4" placeholder="Write an update… use @name to tag someone" value="{{newUpdateText}}" onChange="{{setNewUpdateText}}"></textarea>
-          <button class="post-btn" style="background:{{accent}}" onClick="{{postUpdate}}">Post</button>
-        </div>
-        <div class="tag-row">
-          <span class="tag-hint">Tag</span>
+        <sc-if value="{{selected.updatesEmpty}}" hint-placeholder-val="{{false}}">
+          <div class="chat-empty"><strong>No updates yet</strong><span>Post the first one below. Type @ and a name to notify a teammate.</span></div>
+        </sc-if>
+      </div>
+      <div class="composer">
+        <div class="composer-tags">
           <sc-for list="{{mentionPeople}}" as="m" hint-placeholder-count="3">
-            <button class="tag-chip" onClick="{{m.add}}">@{{m.name}}</button>
+            <button class="composer-tag" onClick="{{m.add}}">@{{m.name}}</button>
           </sc-for>
         </div>
+        <div class="composer-row">
+          <textarea class="composer-input" rows="2" placeholder="Write an update…" value="{{newUpdateText}}" onChange="{{setNewUpdateText}}"></textarea>
+          <button class="composer-send" style="background:{{accent}}" onClick="{{postUpdate}}" aria-label="Post">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+            <span>Post</span>
+          </button>
+        </div>
         <sc-if value="{{emailEnabled}}" hint-placeholder-val="{{false}}">
-          <label class="check-row"><input type="checkbox" checked="{{emailTagged}}" onChange="{{toggleEmailTagged}}"><span>Email tagged people</span></label>
+          <label class="composer-email"><input type="checkbox" checked="{{emailTagged}}" onChange="{{toggleEmailTagged}}"><span>Also email tagged people</span></label>
         </sc-if>
       </div>
 
@@ -852,7 +901,7 @@
       <sc-if value="{{selected.canDelete}}" hint-placeholder-val="{{false}}">
         <div class="footer-remove" onClick="{{removeSelected}}">Remove prospect</div>
       </sc-if>
-      <sc-if value="{{selected.canEdit}}" hint-placeholder-val="{{false}}">
+      <sc-if value="{{showSaveBar}}" hint-placeholder-val="{{false}}">
         <div class="save-bar">
           <span class="{{selected.saveStateClass}}">{{selected.saveStateText}}</span>
           <div style="display:flex;gap:8px;">
@@ -2397,7 +2446,8 @@ class Component extends DCLogic {
       tabDetailsCls: s.drawerTab === 'details' ? 'tab-on' : 'tab-off',
       tabScopeCls: s.drawerTab === 'scope' ? 'tab-on' : 'tab-off',
       tabDocsCls: s.drawerTab === 'docs' ? 'tab-on' : 'tab-off',
-      tabUpdatesCls: s.drawerTab === 'updates' ? 'tab-on' : 'tab-off',
+      tabUpdatesCls: s.drawerTab === 'updates' ? 'tab-on tab-chat' : 'tab-off',
+      showSaveBar: !!(selected && selected.canEdit && (s.drawerTab !== 'updates' || selected.dirty)),
       totalCount: s.prospects.length, shownCount: filtered.length, hiddenCount: s.prospects.length - filtered.length,
       hasHidden: s.prospects.length > filtered.length && activeFilters.length > 0, activeFilters: activeFilters.join(', '),
       clearFilters: () => this.setState({ search: '', filterAssignee: '', filterPriority: '', filterCategory: '', filterTag: '' }),
