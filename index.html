@@ -27,7 +27,7 @@
   *{box-sizing:border-box;}
   body{margin:0;background:#ffffff;color:#14161c;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-size:14px;}
   a{color:#2547f4;} a:hover{color:#173099;}
-  .stage{width:100%;max-width:1440px;margin:0 auto;padding:40px 44px;background:#ffffff;}
+  .stage{width:100%;max-width:none;margin:0;padding:28px 32px;background:#ffffff;}
   .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:26px;}
   .notif-wrap{position:relative;}
   .bell-btn{position:relative;width:40px;height:40px;border:1px solid #d3d6e0;border-radius:8px;background:#fff;color:#4b4f5a;display:flex;align-items:center;justify-content:center;cursor:pointer;}
@@ -54,7 +54,7 @@
   .live-head{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none;}
   .live-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
   .live-title{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#14161c;}
-  .live-count{margin-left:auto;font-size:11px;color:#4b4f5a;}
+  .live-count{margin-left:auto;font-size:11px;color:#4b4f5a;white-space:nowrap;flex-shrink:0;}
   .live-list{border-top:1px solid #e4e6ec;max-height:min(46vh,340px);overflow-y:auto;padding:4px 0;}
   .live-item{padding:7px 12px;font-size:12px;line-height:1.4;color:#14161c;}
   .live-item + .live-item{border-top:1px solid #f0f1f4;}
@@ -308,6 +308,242 @@
     .toast{bottom:calc(90px + env(safe-area-inset-bottom)) !important;}
     .notif-panel{z-index:47 !important;top:auto !important;bottom:calc(76px + env(safe-area-inset-bottom)) !important;max-height:70vh;overflow-y:auto;border-radius:16px !important;}
   }
+
+  /* ===== Theme: soft canvas, colour-coded stages ===== */
+  body{background:#ffffff;}
+  .stage{background:transparent;}
+  .topbar{background:#fff;}
+  .bell-btn,.topbar-btn{border-radius:10px;border-color:#e2e5ee;}
+  .topbar-btn:hover,.bell-btn:hover{border-color:#c9cedb;background:#fafbfd;}
+  .btn-primary{border-radius:10px;box-shadow:0 6px 16px rgba(37,71,244,0.22);}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .stats-row{background:transparent;border:none;gap:12px;border-radius:0;overflow:visible;}
+  .stat-tile{background:#fff;border:1px solid #e4e6ec;border-radius:14px;padding:14px 16px;gap:6px;}
+  .stat-label{display:flex;align-items:center;gap:7px;color:#4b4f5a;letter-spacing:0.06em;}
+  .stat-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex:0 0 auto;}
+  .stat-value{font-size:28px;line-height:1;}
+  .controls-row{background:#fff;}
+  .search-input,.filter-select{border-color:#e2e5ee;border-radius:10px;background:#f8f9fc;}
+  .search-input:focus,.filter-select:focus,.field-input:focus,.post-input:focus{outline:none;border-color:#2547f4;box-shadow:0 0 0 3px rgba(37,71,244,0.14);background:#fff;}
+  .view-toggle{border-color:#e2e5ee;background:#f1f2f7;padding:3px;gap:2px;}
+  .toggle-btn{border-radius:999px;background:transparent;}
+  .kanban{gap:16px;}
+  .col{flex:0 0 250px;border-radius:16px;padding:12px;gap:10px;border:1px solid rgba(20,22,28,0.04);}
+  .col-head{align-items:center;gap:8px;padding:4px 4px 6px;}
+  .col-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+  .col-title{font-size:12.5px;color:#14161c;}
+  .col-head .col-head-right{margin-left:auto;}
+  .col-count{min-width:24px;height:22px;padding:0 8px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;}
+  .card{border:1px solid #e9ebf2;border-radius:12px;padding:13px 14px;box-shadow:0 1px 2px rgba(20,22,28,0.04);transition:box-shadow .15s, transform .15s, border-color .15s;}
+  .card:hover{border-color:#d7dbe6;box-shadow:0 8px 20px rgba(20,22,28,0.08);transform:translateY(-1px);}
+  .card.stalled{box-shadow:inset 3px 0 0 #14161c;}
+  .card-brand{font-size:14px;}
+  .chip{background:#f1f2f7;color:#3d414b;}
+  .chip-value{background:#eef1fe;color:#2547f4;}
+  .add-col{background:transparent !important;border-color:#d7dbe6;}
+  table{background:#fff;border-color:#e9ebf2;border-radius:14px;}
+  th{background:#f8f9fc;}
+  .live{border-radius:14px;border-color:#e9ebf2;}
+  .notif-panel{border-radius:14px;}
+  .notif-item{border-radius:10px;}
+  .modal{border-radius:18px;}
+  .drawer{background:#fff;}
+  .pill{border-radius:999px;border-color:#e2e5ee;}
+  .field-input{border-color:#e2e5ee;border-radius:10px;}
+  .doc-item{border-radius:10px;}
+  .save-btn,.mini-save,.post-btn{border-radius:10px;}
+  .m-stage-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;}
+  /* Simpler, roomier */
+  .filters-closed .filter-select{display:none !important;}
+  .filters-btn{order:2;}
+  .controls-row .view-toggle{order:3;}
+  .card{padding:16px !important;gap:10px !important;}
+  .card-brand{font-size:15px !important;}
+  .card .chip-value,.card .card-foot{display:none !important;}
+  .card.stalled .card-foot{display:flex !important;}
+  .card.stalled .card-foot > span:not(.stale){display:none;}
+  .col{flex-basis:270px !important;}
+  .stat-tile{padding:16px 18px;}
+  .dtabs{position:sticky;top:-32px;z-index:5;display:flex;gap:4px;padding:6px;margin:0 0 4px;background:#f1f2f7;border-radius:14px;overflow-x:auto;scrollbar-width:none;}
+  .dtabs::-webkit-scrollbar{display:none;}
+  .dtab{flex:1 1 0;min-width:max-content;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:none;border-radius:10px;background:transparent;font-family:'League Spartan',sans-serif;font-weight:600;font-size:14px;color:#4b4f5a;cursor:pointer;white-space:nowrap;}
+  .dtab:hover{color:#14161c;}
+  .dtab-n{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#8a8e99;}
+  .tab-off{display:none !important;}
+  .drawer > *{flex-shrink:0;}
+  .dtabs{flex-shrink:0;min-height:52px;}
+  .tab-on{display:flex;flex-direction:column;gap:20px;}
+  .tab-on > .section:first-child{border-top:none;padding-top:4px;}
+  .post-area{min-height:110px;resize:vertical;line-height:1.5;font-size:14.5px !important;padding:12px 14px !important;border-radius:12px !important;}
+  .tab-on .post-row{flex-direction:column;align-items:stretch;}
+  .tab-on .post-row .post-btn{align-self:flex-end;padding:11px 22px;font-size:13px;}
+  .comment{padding:14px 16px !important;border:1px solid #e9ebf2 !important;border-radius:12px;margin-bottom:10px;background:#fafbfd;}
+  .comment:last-child{border-bottom:1px solid #e9ebf2 !important;padding-bottom:14px !important;}
+  .comment-head{font-size:12.5px !important;margin-bottom:6px !important;}
+  .comment-author{font-size:13px;color:#14161c !important;}
+  .comment-text{font-size:15px !important;line-height:1.55;white-space:pre-wrap;}
+  @media (max-width:700px){
+    .dtabs{top:-20px;border-radius:12px;}
+    .dtab{padding:12px 14px;font-size:14px;}
+    .filters-btn{display:inline-flex !important;flex:0 0 auto;min-height:46px;border-radius:12px !important;}
+    .search-input{flex:1 1 0 !important;}
+    .comment{background:#fff;}
+  }
+  .stats-row{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));}
+  .stat-tile{min-width:0;}
+  .live-title{white-space:nowrap;}
+  .btn-primary,.topbar-btn{white-space:nowrap;}
+  .controls-row .search-input{flex:1 1 220px;}
+  .controls-row .filter-select{flex:0 1 150px;min-width:120px;}
+  @media (max-width:1100px){ .live{width:auto;max-width:260px;} }
+  @media (min-width:701px){
+    .live-closed{right:20px !important;bottom:20px !important;width:auto !important;max-width:none !important;border-radius:999px !important;box-shadow:0 10px 26px rgba(20,22,28,0.16) !important;}
+    .live-closed .live-head{padding:12px 18px;gap:10px;}
+    .live-closed .live-count{margin-left:6px;}
+    .live-open{top:0 !important;right:0 !important;bottom:0 !important;width:min(380px,100%) !important;max-width:none !important;border-radius:0 !important;border-top:none !important;border-bottom:none !important;border-right:none !important;box-shadow:-10px 0 32px rgba(20,22,28,0.12) !important;display:flex;flex-direction:column;z-index:45 !important;}
+    .live-open .live-head{padding:20px 20px 16px;border-bottom:1px solid #e4e6ec;}
+    .live-open .live-title{font-size:14px;}
+    .live-open .live-list{flex:1;max-height:none !important;border-top:none;padding:6px 0;}
+    .live-open .live-item{padding:12px 20px;font-size:13.5px;}
+    .live-open .live-count::after{content:' ✕';}
+    .board-split{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:start;}
+    .board-split .m-stages{margin:0 !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;z-index:5;position:sticky;top:16px;display:flex;flex-direction:column;gap:4px;padding:12px;background:#fff;border:1px solid #e4e6ec;border-radius:14px;max-height:calc(100vh - 32px);overflow-y:auto;}
+    .side-title{font-family:'League Spartan',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a8e99;padding:4px 10px 8px;}
+    .board-split .m-stage{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:1px solid transparent;border-radius:10px;background:transparent;font-size:14px;text-align:left;color:#14161c;}
+    .board-split .m-stage:hover{background:#f5f6f9;}
+    .board-split .m-stage-count{margin-left:auto;font-size:12px;}
+    .board-split .side-all{border-bottom:1px solid #eef0f4;border-radius:10px;margin-bottom:4px;}
+    .board-split .kanban{display:block;overflow:visible;padding:0;}
+    .board-split .col-off,.board-split .add-col{display:none !important;}
+    .board-split .col-active{display:grid !important;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;align-content:start;background:transparent !important;border:none !important;padding:0 !important;min-height:0;}
+    .board-split .col-active > .col-head{grid-column:1 / -1;padding:0 2px 4px;}
+    .board-split .col-active > .col-head .col-title{font-size:18px;letter-spacing:0.02em;text-transform:none;}
+    .board-split .col-active > .empty{grid-column:1 / -1;}
+    .board-split .kanban:has(.col-all){display:flex;gap:16px;overflow-x:auto;align-items:flex-start;padding-bottom:8px;}
+    .board-split .col-all{flex:0 0 260px !important;}
+  }
+  @media (max-width:700px){ .side-title,.side-all{display:none !important;} .m-stages{display:flex !important;} }
+  @media (max-width:700px){ .stats-row{display:flex !important;} }
+
+  /* ===== Mobile: app layout ===== */
+  @media (max-width:700px){
+    body{background:#f5f6f9;}
+    .topbar{border:none !important;border-radius:0 !important;box-shadow:none !important;background:transparent !important;padding:4px 0 !important;}
+    .stats-row{gap:10px !important;}
+    .stat-tile{min-width:112px !important;border-radius:16px !important;padding:12px 14px !important;}
+    .stat-value{font-size:24px !important;}
+    .controls-row{background:transparent !important;border:none !important;padding:0 !important;}
+    .search-input{background:#fff !important;border-color:#e6e8f0 !important;min-height:46px !important;padding-left:14px !important;box-shadow:0 1px 2px rgba(20,22,28,0.04);}
+    .filter-select{background:#fff !important;border-color:#e6e8f0 !important;}
+    .m-stages{background:rgba(245,246,249,0.94) !important;border-bottom:none !important;}
+    .m-stage{border-radius:12px !important;padding:10px 14px !important;background:#fff;box-shadow:0 1px 2px rgba(20,22,28,0.05);border-width:1px;}
+    .col{background:transparent !important;border:none !important;}
+    .card{border:none !important;border-radius:18px !important;padding:16px !important;box-shadow:0 2px 10px rgba(20,22,28,0.06) !important;gap:10px !important;}
+    .card:hover{transform:none !important;}
+    .card:active{transform:scale(0.985) !important;}
+    .card-brand{font-size:16px !important;}
+    .card-brief{font-size:13px !important;}
+    .chip{font-size:11.5px !important;padding:4px 10px !important;}
+    .m-nav{border-top:none !important;box-shadow:0 -6px 24px rgba(20,22,28,0.08);border-radius:22px 22px 0 0;}
+    .m-tab{border-radius:14px;}
+    .m-fab{border-radius:20px !important;}
+    .m-sheet{border-radius:24px 24px 0 0 !important;}
+    .m-row{border-bottom-color:#f0f1f5 !important;}
+    .drawer{background:#f5f6f9 !important;}
+    .drawer .section,.drawer .form-grid{background:#fff;border-radius:16px;padding:14px;border-top:none !important;}
+  }
+
+  /* ===== Premium: midnight + paper ===== */
+  body{background:#f3f4f8 !important;}
+  .stage{padding:26px 32px 40px;}
+  .topbar{background:transparent !important;border:none !important;box-shadow:none !important;padding:0 !important;margin-bottom:18px !important;}
+  .topbar-btn,.bell-btn{background:#fff;border-color:#e3e6ee;box-shadow:0 1px 2px rgba(14,19,48,0.04);}
+  .viewer-input{background:#fff;}
+  .hello{margin:0 0 18px;}
+  .brand img{mix-blend-mode:multiply;}
+  .hello-title{font-family:'League Spartan',sans-serif;font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-0.01em;color:#0e1330;margin:0;}
+  .hello-sub{margin:6px 0 0;font-size:13.5px;color:#5b6178;}
+  .hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:stretch;background:#0e1330;color:#fff;border-radius:22px;padding:22px;margin-bottom:20px;box-shadow:0 18px 40px rgba(14,19,48,0.22);}
+  .hero-pipe{display:flex;flex-direction:column;gap:14px;padding:6px 8px;}
+  .hero-pipe-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 10px;line-height:1.2;}
+  .hero-k,.hero-v{white-space:nowrap;}
+  .hero-k{font-family:'League Spartan',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#9aa5d1;}
+  .hero-v{font-family:'League Spartan',sans-serif;font-weight:700;font-size:22px;color:#fff;}
+  .pipe-bar{display:flex;gap:3px;height:14px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,0.08);}
+  .pipe-seg{height:100%;min-width:6px;}
+  .pipe-legend{display:flex;flex-wrap:wrap;gap:6px;}
+  .pipe-item{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#d9def3;font-family:'Montserrat',sans-serif;font-size:12.5px;cursor:pointer;white-space:nowrap;}
+  .pipe-item:hover{background:rgba(255,255,255,0.1);color:#fff;}
+  .pipe-item b{color:#fff;font-weight:700;}
+  .pipe-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .hero .stats-row{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:10px !important;margin:0 !important;}
+  .hero .stat-tile{background:rgba(255,255,255,0.05) !important;border:1px solid rgba(255,255,255,0.08) !important;box-shadow:none !important;border-radius:14px !important;padding:14px 16px !important;color:#fff;min-width:0 !important;}
+  .hero .stat-label{color:#9aa5d1 !important;}
+  .hero .stat-value{color:#fff !important;font-size:28px;}
+  .hero .stat-hide{display:none !important;}
+  .stat-ring{flex-direction:row !important;align-items:center !important;gap:12px !important;}
+  .ring{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .ring-in{width:40px;height:40px;border-radius:50%;background:#0e1330;display:flex;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;color:#fff;}
+  .controls-row{background:#fff !important;border:1px solid #e7e9f0 !important;border-radius:16px !important;padding:10px !important;box-shadow:0 1px 2px rgba(14,19,48,0.04);}
+  .card{background:#fff;border:1px solid #e7e9f0 !important;box-shadow:0 1px 2px rgba(14,19,48,0.04) !important;}
+  .card:hover{box-shadow:0 12px 28px rgba(14,19,48,0.10) !important;border-color:#d9dcea !important;}
+  .btn-primary{background:#2547f4;box-shadow:0 8px 20px rgba(37,71,244,0.28);}
+  @media (min-width:701px){
+    .board-split{grid-template-columns:240px minmax(0,1fr) !important;}
+    .board-split .m-stages{background:#0e1330 !important;border:none !important;border-radius:18px !important;padding:14px !important;box-shadow:0 14px 32px rgba(14,19,48,0.18);}
+    .board-split .side-title{color:#7f89b3 !important;}
+    .board-split .m-stage{color:#c9cfe6 !important;}
+    .board-split .m-stage:hover{background:rgba(255,255,255,0.06) !important;color:#fff !important;}
+    .board-split .m-stage-count{color:inherit;opacity:0.7;}
+    .board-split .col-active > .col-head .col-title{color:#0e1330;font-size:22px !important;}
+    .board-split .col-active > .col-head .col-count{background:#e6e9f5 !important;color:#0e1330 !important;}
+  }
+  @media (max-width:1100px) and (min-width:701px){ .hero{grid-template-columns:1fr;} }
+  @media (min-width:701px){ .topbar-actions{flex-wrap:wrap;justify-content:flex-end;min-width:0;gap:10px;} .topbar .brand{flex:0 0 auto;} }
+  .m-row-switch{min-height:64px !important;}
+  .m-row-main{display:flex;flex-direction:column;gap:2px;text-align:left;}
+  .m-row-hint{font-size:12px;color:#5b6178;}
+  .switch{position:relative;width:51px;height:31px;border-radius:999px;background:#d7dae4;flex:0 0 auto;transition:background .2s;}
+  .switch-knob{position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(14,19,48,0.25);transition:transform .2s;}
+  @media (max-width:700px){
+    .m-nav{background:#0e1330 !important;border-radius:24px 24px 0 0 !important;box-shadow:0 -8px 28px rgba(14,19,48,0.28) !important;}
+    .m-tab{color:#8f99c4 !important;}
+    .m-tab[style*="color"]{color:#ffffff !important;}
+    .m-tab[style*="color"] svg{filter:drop-shadow(0 0 6px rgba(111,140,255,0.6));}
+    .m-fab{background:#2547f4 !important;box-shadow:0 12px 26px rgba(37,71,244,0.45) !important;bottom:calc(92px + env(safe-area-inset-bottom)) !important;}
+    .m-stage{border:none !important;box-shadow:0 2px 8px rgba(14,19,48,0.06) !important;}
+    .m-stage[style*="background"]{background:#0e1330 !important;color:#fff !important;}
+    .card{border:none !important;box-shadow:0 4px 16px rgba(14,19,48,0.07) !important;}
+    .card-brand{color:#0e1330;}
+    .m-sheet{padding-top:10px !important;}
+    .m-sheet-title{font-size:22px !important;color:#0e1330;}
+    .m-row{min-height:56px !important;font-size:15.5px !important;}
+    .search-input{border-radius:14px !important;border:none !important;box-shadow:0 2px 8px rgba(14,19,48,0.06) !important;}
+    .filter-select{border:none !important;border-radius:12px !important;box-shadow:0 2px 8px rgba(14,19,48,0.05);}
+  }
+  @media (min-width:701px){
+    .board-split{grid-template-columns:minmax(0,1fr) !important;}
+    .board-split .m-stages{display:none !important;}
+  }
+  @media (max-width:700px){
+    body{background:#f3f4f8 !important;}
+    .stage{padding:0 14px calc(150px + env(safe-area-inset-bottom)) !important;}
+    .topbar{background:#0e1330 !important;margin:0 -14px !important;padding:14px 16px 12px !important;border-radius:0 !important;}
+    .topbar .brand img{filter:invert(1);mix-blend-mode:screen;}
+    .topbar .bell-btn{background:rgba(255,255,255,0.08) !important;border-color:rgba(255,255,255,0.12) !important;color:#fff !important;}
+    .hello{background:#0e1330;margin:0 -14px !important;padding:10px 16px 6px;}
+    .hello-title{color:#fff;font-size:26px;}
+    .hello-sub{color:#9aa5d1;font-size:12.5px;}
+    .hero{grid-template-columns:1fr;margin:0 -14px 16px !important;border-radius:0 0 26px 26px !important;padding:14px 16px 20px !important;box-shadow:0 14px 30px rgba(14,19,48,0.18) !important;}
+    .hero-pipe{padding:0;}
+    .hero .stats-row{display:flex !important;overflow-x:auto;scrollbar-width:none;margin:0 -16px !important;padding:0 16px !important;}
+    .hero .stats-row::-webkit-scrollbar{display:none;}
+    .hero .stat-tile{flex:0 0 auto !important;min-width:110px !important;}
+    .pipe-legend{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px;}
+    .pipe-legend::-webkit-scrollbar{display:none;}
+    .controls-row{background:transparent !important;border:none !important;box-shadow:none !important;padding:0 !important;}
+    .m-stages{background:rgba(243,244,248,0.96) !important;}
+  }
 </style>
 </helmet>
 <div class="stage">
@@ -361,14 +597,25 @@
     </div>
   </div>
 
+  <div class="hero">
+  <div class="hero-pipe">
+    <div class="hero-pipe-head"><span class="hero-k">Pipeline</span><span class="hero-v">{{stats.total}} prospects</span></div>
+    <div class="pipe-bar">
+      <sc-for list="{{pipeline}}" as="sg" hint-placeholder-count="6"><span class="pipe-seg" style="{{sg.style}}" title="{{sg.name}} · {{sg.count}}"></span></sc-for>
+    </div>
+    <div class="pipe-legend">
+      <sc-for list="{{pipeline}}" as="sg" hint-placeholder-count="6"><button class="pipe-item" onClick="{{sg.select}}"><i class="pipe-dot" style="{{sg.dot}}"></i><span>{{sg.name}}</span><b>{{sg.count}}</b></button></sc-for>
+    </div>
+  </div>
   <div class="stats-row">
-    <div class="stat-tile"><span class="stat-value">{{stats.total}}</span><span class="stat-label">Total prospects</span></div>
-    <div class="stat-tile"><span class="stat-value">{{stats.active}}</span><span class="stat-label">Active</span></div>
-    <div class="stat-tile"><span class="stat-value">{{stats.won}}</span><span class="stat-label">Won</span></div>
-    <div class="stat-tile"><span class="stat-value">{{stats.lost}}</span><span class="stat-label">Lost</span></div>
-    <div class="stat-tile"><span class="stat-value">{{stats.parked}}</span><span class="stat-label">Postponed</span></div>
-    <div class="stat-tile" title="Won ÷ (Won + Lost) · {{stats.winRateNote}}. Postponed and active deals aren't counted."><span class="stat-value">{{stats.winRate}}</span><span class="stat-label">Win rate</span></div>
-    <div class="stat-tile"><span class="stat-value">{{stats.stalled}}</span><span class="stat-label">Stalled</span></div>
+    <div class="stat-tile stat-hide"><span class="stat-label">Total prospects</span><span class="stat-value">{{stats.total}}</span></div>
+    <div class="stat-tile"><span class="stat-label">Active</span><span class="stat-value">{{stats.active}}</span></div>
+    <div class="stat-tile"><span class="stat-label">Won</span><span class="stat-value">{{stats.won}}</span></div>
+    <div class="stat-tile"><span class="stat-label">Lost</span><span class="stat-value">{{stats.lost}}</span></div>
+    <div class="stat-tile"><span class="stat-label">Postponed</span><span class="stat-value">{{stats.parked}}</span></div>
+    <div class="stat-tile stat-ring" title="Won ÷ (Won + Lost) · {{stats.winRateNote}}. Postponed and active deals aren't counted."><span class="ring" style="{{winRingStyle}}"><span class="ring-in">{{stats.winRate}}</span></span><span class="stat-label">Win rate</span></div>
+    <div class="stat-tile"><span class="stat-label">Stalled</span><span class="stat-value">{{stats.stalled}}</span></div>
+  </div>
   </div>
 
   <div class="controls-row">
@@ -411,15 +658,17 @@
   </sc-if>
 
   <sc-if value="{{isBoard}}" hint-placeholder-val="{{true}}">
-    <div class="m-stages m-only">
+    <div class="board-split">
+    <div class="m-stages">
       <sc-for list="{{columns}}" as="col" hint-placeholder-count="6">
-        <button class="m-stage" style="{{col.mTabStyle}}" onClick="{{col.mSelect}}">{{col.name}}<span class="m-stage-count">{{col.count}}</span></button>
+        <button class="m-stage" style="{{col.mTabStyle}}" onClick="{{col.mSelect}}"><span class="m-stage-dot" style="{{col.mDotStyle}}"></span>{{col.name}}<span class="m-stage-count">{{col.count}}</span></button>
       </sc-for>
     </div>
     <div class="kanban" onTouchStart="{{kanbanTouchStart}}" onTouchEnd="{{kanbanTouchEnd}}">
       <sc-for list="{{columns}}" as="col" hint-placeholder-count="6">
         <div class="{{col.mClass}}" data-stage="{{col.name}}" style="{{col.colStyle}}" onDragOver="{{col.onDragOver}}" onDrop="{{col.onDrop}}">
           <div class="col-head" style="gap:8px;" draggable="{{col.draggable}}" onDragStart="{{col.onDragStart}}" onDragEnd="{{col.onDragEnd}}" onTouchStart="{{col.onTouchStart}}" onTouchEnd="{{col.cancelPress}}" onContextMenu="{{col.onContextMenu}}">
+            <span class="col-dot" style="{{col.dotStyle}}"></span>
             <sc-if value="{{col.isEditing}}" hint-placeholder-val="{{false}}">
               <input class="col-rename" value="{{stageRenameText}}" onChange="{{setStageRenameText}}" onKeyDown="{{col.renameKey}}" onBlur="{{col.commitRename}}" autoFocus="{{true}}">
             </sc-if>
@@ -427,7 +676,7 @@
               <span class="col-title" onDoubleClick="{{col.startRename}}" title="{{col.renameHint}}" style="{{col.titleStyle}}">{{col.name}}</span>
             </sc-if>
             <span class="col-head-right">
-              <span class="col-count">{{col.count}}</span>
+              <span class="col-count" style="{{col.countStyle}}">{{col.count}}</span>
               <sc-if value="{{col.canRemove}}" hint-placeholder-val="{{false}}">
                 <button class="col-remove" onClick="{{col.remove}}" title="Remove empty stage">×</button>
               </sc-if>
@@ -452,6 +701,7 @@
         <button class="add-col-btn" style="color:{{accent}}" onClick="{{addStage}}">+ Add</button>
       </div>
       </sc-if>
+    </div>
     </div>
   </sc-if>
 
@@ -498,6 +748,12 @@
         </sc-for>
       </div>
 
+      <div class="dtabs">
+        <sc-for list="{{drawerTabs}}" as="t" hint-placeholder-count="4">
+          <button class="dtab" style="{{t.style}}" onClick="{{t.select}}">{{t.label}}<span class="dtab-n">{{t.count}}</span></button>
+        </sc-for>
+      </div>
+      <div class="{{tabDetailsCls}}">
       <div class="form-grid">
         <div class="field"><span class="field-label">Brand name</span><input class="field-input" value="{{selected.brand}}" onChange="{{selected.onBrand}}" disabled="{{selected.locked}}"></div>
         <div class="field"><span class="field-label">Category</span><select class="field-input" value="{{selected.category}}" onChange="{{selected.onCategory}}" disabled="{{selected.locked}}"><option value="">Choose…</option><sc-for list="{{categories}}" as="c" hint-placeholder-count="4"><option value="{{c}}">{{c}}</option></sc-for></select></div>
@@ -513,6 +769,8 @@
         <div class="field"><span class="field-label">Tags</span><input class="field-input" value="{{selected.tags}}" onChange="{{selected.onTags}}" disabled="{{selected.locked}}"></div>
       </div>
 
+      </div>
+      <div class="{{tabScopeCls}}">
       <div class="section">
         <h3 class="section-title">Scope &amp; deliverables</h3>
         <div class="field"><span class="field-label">Scope</span><textarea class="field-input field-textarea" rows="3" placeholder="What's in and out of this engagement" value="{{selected.scope}}" onChange="{{selected.onScope}}" disabled="{{selected.locked}}"></textarea></div>
@@ -533,6 +791,8 @@
         </sc-if>
       </div>
 
+      </div>
+      <div class="{{tabDocsCls}}">
       <div class="section">
         <h3 class="section-title">Brief docs</h3>
         <sc-for list="{{selected.briefDocs}}" as="d" hint-placeholder-count="0">
@@ -569,6 +829,8 @@
         </div>
       </div>
 
+      </div>
+      <div class="{{tabUpdatesCls}}">
       <div class="section">
         <h3 class="section-title">Updates</h3>
         <sc-for list="{{selected.updates}}" as="u" hint-placeholder-count="0">
@@ -580,7 +842,7 @@
         </sc-for>
         <sc-if value="{{selected.updatesEmpty}}" hint-placeholder-val="{{false}}"><div class="empty">No updates yet.</div></sc-if>
         <div class="post-row">
-          <input class="post-input" placeholder="Post an update… use @name to tag" value="{{newUpdateText}}" onChange="{{setNewUpdateText}}">
+          <textarea class="post-input post-area" rows="4" placeholder="Write an update… use @name to tag someone" value="{{newUpdateText}}" onChange="{{setNewUpdateText}}"></textarea>
           <button class="post-btn" style="background:{{accent}}" onClick="{{postUpdate}}">Post</button>
         </div>
         <div class="tag-row">
@@ -592,6 +854,8 @@
         <sc-if value="{{emailEnabled}}" hint-placeholder-val="{{false}}">
           <label class="check-row"><input type="checkbox" checked="{{emailTagged}}" onChange="{{toggleEmailTagged}}"><span>Email tagged people</span></label>
         </sc-if>
+      </div>
+
       </div>
 
       <sc-if value="{{selected.canDelete}}" hint-placeholder-val="{{false}}">
@@ -766,7 +1030,10 @@
       <div class="field" style="margin-bottom:8px;"><span class="field-label">Posting as</span><input class="field-input" value="{{viewerName}}" onChange="{{setViewerName}}" onBlur="{{registerViewer}}"></div>
       <sc-if value="{{showInstall}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{installApp}}"><span>Install app</span><span class="m-row-sub">Home screen</span></button></sc-if>
       <sc-if value="{{gmailEnabled}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{gmailClick}}"><span>{{gmailLabel}}</span><span class="m-row-sub">Gmail</span></button></sc-if>
-      <sc-if value="{{canEnablePush}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{enablePush}}"><span>{{pushBtnLabel}}</span><span class="m-row-sub">Notifications</span></button></sc-if>
+      <button class="m-row m-row-switch" onClick="{{togglePush}}">
+        <span class="m-row-main"><span>Notifications</span><span class="m-row-hint">{{pushHint}}</span></span>
+        <span class="switch" style="{{switchStyle}}"><span class="switch-knob" style="{{knobStyle}}"></span></span>
+      </button>
       <button class="m-row" onClick="{{mOpenTeam}}"><span>Team</span><span class="m-row-sub">People &amp; emails</span></button>
       <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{mOpenMg}}"><span>Manage</span><span class="m-row-sub">Stages, categories…</span></button></sc-if>
       <button class="m-row" onClick="{{mToggleMaster}}"><span>{{masterLabel}}</span><span class="m-row-sub">Edit access</span></button>
@@ -775,7 +1042,7 @@
   </div>
 </sc-if>
 
-<div class="live">
+<div class="{{liveCls}}">
   <div class="live-head" onClick="{{toggleLive}}">
     <span class="live-dot" style="{{liveDotStyle}}"></span>
     <span class="live-title">Live activity</span>
@@ -965,6 +1232,19 @@ function setPath(obj, segs, val) {
   if (nv === null || nv === undefined) delete o[segs[0]]; else o[segs[0]] = nv;
   return o;
 }
+const STAGE_HUES = ['#5b6cf0','#0e9fb3','#8b5cf6','#2547f4','#d9631e','#c2418a','#3f8f5f','#6b7280'];
+function stageColor(name, i) {
+  const n = String(name || '').toLowerCase();
+  if (/\bwon\b|\bwin\b/.test(n)) return '#1f8a5b';
+  if (/lost|declin|reject|dropped/.test(n)) return '#c23b4e';
+  if (/pos?t?pon|hold|park|pause|defer/.test(n)) return '#b7791f';
+  if (n === 'no stage') return '#c23b4e';
+  return STAGE_HUES[((i % STAGE_HUES.length) + STAGE_HUES.length) % STAGE_HUES.length];
+}
+function priorityColor(p) {
+  const n = String(p || '').toLowerCase();
+  return n.startsWith('h') ? '#d6453d' : n.startsWith('m') ? '#d99a1e' : n.startsWith('l') ? '#2f9e6a' : '#9aa0ad';
+}
 function colorForIndex(i) { return PALETTE[((i % PALETTE.length) + PALETTE.length) % PALETTE.length]; }
 
 function seedProspects() { return []; }
@@ -1024,7 +1304,8 @@ class Component extends DCLogic {
     canInstall: false, isStandalone: false,
     pushOn: (() => { try { return !!localStorage.getItem('atom-push-name') && typeof Notification !== 'undefined' && Notification.permission === 'granted'; } catch (e) { return false; } })(),
     mStage: null, mActivityOpen: false, mMoreOpen: false,
-    activity: [], deletedIds: [], liveOpen: (typeof window !== 'undefined' && window.innerWidth > 700), liveSeenTs: Date.now(),
+    drawerTab: 'details', filtersOpen: false,
+    activity: [], deletedIds: [], liveOpen: false, liveSeenTs: Date.now(),
     renamingStage: null, stageRenameText: '', stageDropTarget: null, touchMoving: null,
     gmailEmail: (() => { try { return localStorage.getItem('atom-gmail') || ''; } catch (e) { return ''; } })(),
     edits: {},
@@ -1033,6 +1314,9 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
+    setTimeout(() => this.syncPushState(), 600);
+    this._vis = () => { if (!document.hidden) this.syncPushState(); };
+    document.addEventListener('visibilitychange', this._vis);
     try { const pid = new URLSearchParams(location.search).get('p'); if (pid) { this._openOnLoad = pid; history.replaceState(null, '', location.pathname); } } catch (e) {}
     this._openTimer = setInterval(() => { if (this._openOnLoad && this.state.prospects.some(p => p.id === this._openOnLoad)) { this.openDrawer(this._openOnLoad); this._openOnLoad = null; } if (!this._openOnLoad) clearInterval(this._openTimer); }, 400);
     if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', (e) => { if (e.data && e.data.openProspect) this.openDrawer(e.data.openProspect); });
@@ -1432,6 +1716,33 @@ class Component extends DCLogic {
       this.saved(me, 'Phone notifications on for this device.');
     } catch (e) { this.showToast({ from: '⚠ Couldn\'t turn on', verb: '', prospectBrand: '', text: String(e.message || e).slice(0, 140) }); }
   };
+  syncPushState = async () => {
+    try {
+      if (!this.pushSupported()) { this.setState({ pushOn: false, alertPermission: 'unsupported' }); return; }
+      const perm = Notification.permission;
+      let on = false;
+      if (perm === 'granted') { const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription(); on = !!sub; }
+      this.setState({ pushOn: on, alertPermission: perm });
+    } catch (e) {}
+  };
+  togglePush = async () => {
+    if (this.state.pushOn) {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription();
+        if (sub) { fetch(API_BASE + '/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'unsubscribe', endpoint: sub.endpoint }) }).catch(() => {}); await sub.unsubscribe(); }
+        try { localStorage.removeItem('atom-push-name'); } catch (e) {}
+      } catch (e) {}
+      this.setState({ pushOn: false });
+      this.showToast({ from: 'Notifications off', verb: '', prospectBrand: '', text: 'This device won\'t get phone alerts.' });
+      return;
+    }
+    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+      this.showToast({ from: 'Blocked in phone settings', verb: '', prospectBrand: '', text: 'Open Settings → Notifications → Prospects (or your browser) and allow, then come back.' });
+      return;
+    }
+    await this.enablePush();
+    this.syncPushState();
+  };
   pushNotify = (names, title, body, prospectId) => {
     const to = (names || []).filter(n => n && !sameName(n, this.state.viewerName));
     if (!to.length || BACKEND !== 'neon') return;
@@ -1747,7 +2058,7 @@ class Component extends DCLogic {
     this.notifyAssigned(this.namesOf(d.assignee), p, d.nextAction ? 'Next action: ' + d.nextAction : 'New prospect added to ' + p.stage + '.');
   };
 
-  openDrawer = (id) => { this._docFile = null; this.setState({ edits: {}, justSaved: false, delivDrafts: {}, docEdit: null, updEdit: null, selectedId: id, newUpdateText: '', newDeliverable: '', docDraft: { type: 'Brief', name: '', url: '' }, docFileName: '', docError: '' }); };
+  openDrawer = (id) => { this._docFile = null; this.setState({ drawerTab: 'details', edits: {}, justSaved: false, delivDrafts: {}, docEdit: null, updEdit: null, selectedId: id, newUpdateText: '', newDeliverable: '', docDraft: { type: 'Brief', name: '', url: '' }, docFileName: '', docError: '' }); };
   closeDrawer = () => this.setState({ selectedId: null });
 
   updateField = (id, field, value) => {
@@ -1852,6 +2163,7 @@ class Component extends DCLogic {
     const orphans = filtered.filter(p => !s.stages.includes(p.stage));
     const columns = s.stages.map((st, si) => {
       const items = filtered.filter(p => p.stage === st);
+      const sc = stageColor(st, si);
       return { name: st, items, count: items.length, isEmpty: items.length === 0, canRemove: s.prospects.filter(p => p.stage === st).length === 0 && s.stages.length > 1 && s.isMaster, remove: () => this.removeStage(st),
         draggable: s.isMaster && s.renamingStage !== st,
         onDragStart: (e) => { if (!s.isMaster) return; this._dragStage = st; try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/x-stage', st); } catch (er) {} },
@@ -1871,7 +2183,10 @@ class Component extends DCLogic {
         onContextMenu: (e) => { if (s.isMaster) e.preventDefault(); },
         onDragOver: (e) => { if (!this._dragStage) return; e.preventDefault(); if (s.stageDropTarget !== st) this.setState({ stageDropTarget: st }); },
         onDrop: (e) => { if (!this._dragStage) return; e.preventDefault(); e.stopPropagation(); const from = this._dragStage; this._dragStage = null; this.setState({ stageDropTarget: null }); this.dropStage(from, st); },
-        colStyle: s.touchMoving === st ? { opacity: 0.55, transform: 'scale(0.97)', transition: 'transform .15s' } : (s.stageDropTarget === st && this._dragStage && this._dragStage !== st ? { outline: '2px dashed ' + accent, outlineOffset: '2px' } : null),
+        colStyle: { background: '#f5f6f9', ...(s.touchMoving === st ? { opacity: 0.55, transform: 'scale(0.97)', transition: 'transform .15s' } : (s.stageDropTarget === st && this._dragStage && this._dragStage !== st ? { outline: '2px dashed ' + sc, outlineOffset: '2px' } : {})) },
+        dotStyle: { display: 'none' },
+        countStyle: { background: '#e9ebf0', color: '#4b4f5a' },
+        stageHex: accent,
         isEditing: s.renamingStage === st, notEditing: s.renamingStage !== st,
         startRename: () => s.isMaster && this.setState({ renamingStage: st, stageRenameText: st }),
         renameHint: s.isMaster ? 'Drag (or long-press on mobile) to reorder · double-click to rename' : '',
@@ -1879,9 +2194,11 @@ class Component extends DCLogic {
         renameKey: (e) => { if (e.key === 'Enter') this.commitStageRename(); if (e.key === 'Escape') this.setState({ renamingStage: null }); },
         commitRename: () => this.commitStageRename() };
     });
-    const mActive = columns.some(c => c.name === s.mStage) ? s.mStage : (orphans.length ? 'No stage' : (columns[0] && columns[0].name));
-    const decorate = (c) => ({ ...c, mClass: 'col' + (c.name === mActive ? '' : ' col-off'),
+    const isWide = typeof window !== 'undefined' && window.innerWidth > 700;
+    const mActive = (columns.some(c => c.name === s.mStage) ? s.mStage : (orphans.length ? 'No stage' : (columns[0] && columns[0].name)));
+    const decorate = (c) => ({ ...c, mClass: 'col' + (mActive === '__all' ? ' col-all' : (c.name === mActive ? ' col-active' : ' col-off')),
       mTabStyle: c.name === mActive ? { background: accent, borderColor: accent, color: '#fff' } : null,
+      mDotStyle: { background: c.name === mActive ? '#fff' : '#c3c7d2' },
       mSelect: () => { this.setState({ mStage: c.name }); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} } });
     if (orphans.length && columns.length) {
       const stub = Object.fromEntries(Object.entries(columns[0]).map(([k, v]) => [k, typeof v === 'function' ? () => {} : v]));
@@ -1988,10 +2305,17 @@ class Component extends DCLogic {
       canEnableAlerts: s.alertPermission === 'default',
       canEnablePush: !s.pushOn,
       pushBtnLabel: 'Turn on phone notifications',
+      togglePush: this.togglePush,
+      pushHint: s.pushOn ? 'On · matches your phone settings' : (s.alertPermission === 'denied' ? 'Blocked in phone settings' : s.alertPermission === 'unsupported' ? 'Install the app to enable' : 'Off'),
+      switchStyle: s.pushOn ? { background: '#2547f4' } : (s.alertPermission === 'denied' ? { background: '#e5c2c7' } : null),
+      knobStyle: s.pushOn ? { transform: 'translateX(20px)' } : null,
       enableAlerts: this.enableAlerts,
       viewerFirst: (s.viewerName || 'you').split(' ')[0],
       registerViewer: this.registerViewer,
       showInstall: !s.isStandalone, installApp: this.installApp,
+      selectAllStages: () => this.setState({ mStage: '__all' }),
+      allTabStyle: s.mStage === '__all' ? { background: accent, borderColor: accent, color: '#fff' } : null,
+      allDotStyle: { background: s.mStage === '__all' ? '#fff' : '#c3c7d2' },
       kanbanTouchStart: (e) => { const t = e.touches[0]; this._sw = { x: t.clientX, y: t.clientY, t: Date.now() }; },
       kanbanTouchEnd: (e) => {
         const st = this._sw; this._sw = null;
@@ -2066,9 +2390,27 @@ class Component extends DCLogic {
       boardToggleStyle: s.view === 'board' ? { background: accent, color: '#fff' } : { background: '#fff', color: '#8a8e99' },
       tableToggleStyle: s.view === 'table' ? { background: accent, color: '#fff' } : { background: '#fff', color: '#8a8e99' },
       columns,
+      greeting: (() => { const h = new Date().getHours(); const n = String(s.viewerName || '').trim().split(/\s+/)[0]; return (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + (n && !/^you$/i.test(n) ? ', ' + n : ''); })(),
+      todayLabel: new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' }),
+      pipeline: columns.map((c, i) => { const L = 50 + Math.round((i / Math.max(1, columns.length - 1)) * 36); const col = 'hsl(228, 92%, ' + L + '%)';
+        return { name: c.name, count: c.count, style: { flexGrow: c.count, flexBasis: 0, background: col, display: c.count ? 'block' : 'none' }, dot: { background: col }, select: c.mSelect }; }),
+      winRingStyle: (() => { const d = s.prospects.filter(p => /\bwon\b|\bwin\b/i.test(p.stage || '')).length, l = s.prospects.filter(p => /lost|declin|reject|dropped/i.test(p.stage || '')).length; const pct = (d + l) ? Math.round(d / (d + l) * 100) : 0;
+        return { background: 'conic-gradient(#6f8cff ' + pct + '%, rgba(255,255,255,0.12) 0)' }; })(),
+      filtersCls: s.filtersOpen ? 'filters-open' : 'filters-closed',
+      toggleFilters: () => this.setState(st => ({ filtersOpen: !st.filtersOpen })),
+      filtersLabel: (s.filtersOpen ? 'Hide filters' : 'Filters') + (activeFilters.filter(x => x !== 'search').length ? ' · ' + activeFilters.filter(x => x !== 'search').length : ''),
+      filtersBtnStyle: activeFilters.filter(x => x !== 'search').length ? { borderColor: accent, color: accent } : null,
+      drawerTabs: (() => { const sel = s.selectedId ? s.prospects.find(x => x.id === s.selectedId) : null; if (!sel) return [];
+        const tabs = [['details', 'Details', ''], ['scope', 'Scope', sel.deliverables.length || ''], ['docs', 'Docs', sel.docs.length || ''], ['updates', 'Updates', sel.updates.filter(u => !u.system).length || '']];
+        return tabs.map(([k, label, count]) => ({ label, count, style: s.drawerTab === k ? { background: '#fff', color: '#14161c', boxShadow: '0 1px 3px rgba(20,22,28,0.12)' } : null, select: () => this.setState({ drawerTab: k }) })); })(),
+      tabDetailsCls: s.drawerTab === 'details' ? 'tab-on' : 'tab-off',
+      tabScopeCls: s.drawerTab === 'scope' ? 'tab-on' : 'tab-off',
+      tabDocsCls: s.drawerTab === 'docs' ? 'tab-on' : 'tab-off',
+      tabUpdatesCls: s.drawerTab === 'updates' ? 'tab-on' : 'tab-off',
       totalCount: s.prospects.length, shownCount: filtered.length, hiddenCount: s.prospects.length - filtered.length,
       hasHidden: s.prospects.length > filtered.length && activeFilters.length > 0, activeFilters: activeFilters.join(', '),
       clearFilters: () => this.setState({ search: '', filterAssignee: '', filterPriority: '', filterCategory: '', filterTag: '' }),
+      liveCls: 'live ' + (s.liveOpen ? 'live-open' : 'live-closed'),
       liveOpen: s.liveOpen, toggleLive: () => this.setState(st => ({ liveOpen: !st.liveOpen, liveSeenTs: Date.now() })),
       liveItems: s.activity.slice(0, 60).map(a => ({ who: a.who, text: a.text, when: timeAgo(a.ts), cls: 'live-item' + (a.ts > s.liveSeenTs && !sameName(a.who, s.viewerName) ? ' live-new' : '') })),
       liveEmpty: s.activity.length === 0,
