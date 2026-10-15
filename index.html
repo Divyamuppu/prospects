@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -578,6 +578,13 @@
     .composer-send{width:48px;padding:0;justify-content:center;border-radius:50%;}
     .stage-track{margin:0 -16px !important;padding:2px 16px !important;}
     .footer-remove{padding-bottom:24px;}
+  }
+
+  /* Zoom lock */
+  html,body{max-width:100%;overflow-x:hidden;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  @media (max-width:700px){
+    input,textarea,select{font-size:16px !important;}
+    .stage{max-width:100vw;overflow-x:hidden;}
   }
 </style>
 </helmet>
@@ -1354,6 +1361,16 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
+    // Lock zoom (iOS Safari ignores user-scalable=no, so block gestures directly)
+    try {
+      const vp = document.querySelector('meta[name="viewport"]');
+      if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+      const stop = (e) => e.preventDefault();
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, stop, { passive: false }));
+      document.addEventListener('touchmove', (e) => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+      let lastTap = 0;
+      document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTap < 300 && !(e.target.closest && e.target.closest('input,textarea,select,[contenteditable]'))) e.preventDefault(); lastTap = now; }, { passive: false });
+    } catch (e) {}
     setTimeout(() => this.syncPushState(), 600);
     this._vis = () => { if (!document.hidden) this.syncPushState(); };
     document.addEventListener('visibilitychange', this._vis);
