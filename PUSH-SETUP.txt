@@ -1,0 +1,6 @@
+Netlify → Project configuration → Environment variables → add:
+
+VAPID_PUBLIC_KEY  = BPpiuECNyJme8a6JF6ijyARFW9QvRTn7AORwHIzY0lvkXE0kuqmK64PrYeKgPO3PuIWUqmRbFDBeDDk6s_FZBh0
+VAPID_PRIVATE_KEY = yGHRWZq-adcGt_SdCs1pw2KllBwEmBsUkuAXA40dEwM
+
+Keep the private key secret. Then push to GitHub and redeploy.

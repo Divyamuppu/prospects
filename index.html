@@ -338,8 +338,8 @@
               <button class="notif-link" style="color:{{accent}}" onClick="{{markAllRead}}">Mark all read</button>
             </div>
             <div class="notif-sub">Showing alerts for <strong>{{viewerName}}</strong></div>
-            <sc-if value="{{canEnableAlerts}}" hint-placeholder-val="{{false}}">
-              <button class="notif-enable" onClick="{{enableAlerts}}">Turn on desktop alerts</button>
+            <sc-if value="{{canEnablePush}}" hint-placeholder-val="{{false}}">
+              <button class="notif-enable" onClick="{{enablePush}}">{{pushBtnLabel}}</button>
             </sc-if>
             <div class="notif-list">
               <sc-for list="{{myNotifs}}" as="n" hint-placeholder-count="0">
@@ -766,6 +766,7 @@
       <div class="field" style="margin-bottom:8px;"><span class="field-label">Posting as</span><input class="field-input" value="{{viewerName}}" onChange="{{setViewerName}}" onBlur="{{registerViewer}}"></div>
       <sc-if value="{{showInstall}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{installApp}}"><span>Install app</span><span class="m-row-sub">Home screen</span></button></sc-if>
       <sc-if value="{{gmailEnabled}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{gmailClick}}"><span>{{gmailLabel}}</span><span class="m-row-sub">Gmail</span></button></sc-if>
+      <sc-if value="{{canEnablePush}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{enablePush}}"><span>{{pushBtnLabel}}</span><span class="m-row-sub">Notifications</span></button></sc-if>
       <button class="m-row" onClick="{{mOpenTeam}}"><span>Team</span><span class="m-row-sub">People &amp; emails</span></button>
       <sc-if value="{{isMaster}}" hint-placeholder-val="{{false}}"><button class="m-row" onClick="{{mOpenMg}}"><span>Manage</span><span class="m-row-sub">Stages, categories…</span></button></sc-if>
       <button class="m-row" onClick="{{mToggleMaster}}"><span>{{masterLabel}}</span><span class="m-row-sub">Edit access</span></button>
@@ -835,6 +836,7 @@ const STORE_KEY = 'atom-wip-board-v2';
 const TABLE = 'atom_board';
 // ▼ BACKEND: 'neon' (Netlify Functions + Neon Postgres) or 'supabase'
 const BACKEND = 'neon';
+const VAPID_PUBLIC_KEY = 'BPpiuECNyJme8a6JF6ijyARFW9QvRTn7AORwHIzY0lvkXE0kuqmK64PrYeKgPO3PuIWUqmRbFDBeDDk6s_FZBh0';
 const API_BASE = '/api';
 const POLL_MS = 4000;
 function neonClient() {
@@ -1020,6 +1022,7 @@ class Component extends DCLogic {
     emailTagged: true,
     assignNewText: '',
     canInstall: false, isStandalone: false,
+    pushOn: (() => { try { return !!localStorage.getItem('atom-push-name') && typeof Notification !== 'undefined' && Notification.permission === 'granted'; } catch (e) { return false; } })(),
     mStage: null, mActivityOpen: false, mMoreOpen: false,
     activity: [], deletedIds: [], liveOpen: (typeof window !== 'undefined' && window.innerWidth > 700), liveSeenTs: Date.now(),
     renamingStage: null, stageRenameText: '', stageDropTarget: null, touchMoving: null,
@@ -1030,6 +1033,9 @@ class Component extends DCLogic {
   };
 
   componentDidMount() {
+    try { const pid = new URLSearchParams(location.search).get('p'); if (pid) { this._openOnLoad = pid; history.replaceState(null, '', location.pathname); } } catch (e) {}
+    this._openTimer = setInterval(() => { if (this._openOnLoad && this.state.prospects.some(p => p.id === this._openOnLoad)) { this.openDrawer(this._openOnLoad); this._openOnLoad = null; } if (!this._openOnLoad) clearInterval(this._openTimer); }, 400);
+    if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', (e) => { if (e.data && e.data.openProspect) this.openDrawer(e.data.openProspect); });
     const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
     this.setState({ isStandalone: !!standalone });
     if (window.__atomInstallEvt) this.setState({ canInstall: true });
@@ -1403,6 +1409,40 @@ class Component extends DCLogic {
     this.setState({ toast: t });
     this._toastTimer = setTimeout(() => this.setState({ toast: null }), 6000);
   };
+  pushSupported = () => typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window && typeof Notification !== 'undefined';
+  enablePush = async () => {
+    const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    if (ios && !standalone) { this.showToast({ from: 'One step first', verb: '', prospectBrand: '', text: 'On iPhone, install the app (Share → Add to Home Screen), open it from the home screen, then turn on notifications.' }); return; }
+    if (!this.pushSupported()) { this.showToast({ from: '⚠ Not supported', verb: '', prospectBrand: '', text: 'This browser can\'t receive push notifications.' }); return; }
+    const me = (this.state.viewerName || '').trim();
+    if (!me || sameName(me, 'You')) { this.showToast({ from: 'Set your name', verb: '', prospectBrand: '', text: 'Type your name in "Posting as" first, so alerts reach you.' }); return; }
+    try {
+      const perm = await Notification.requestPermission();
+      this.setState({ alertPermission: perm });
+      if (perm !== 'granted') { this.showToast({ from: '⚠ Blocked', verb: '', prospectBrand: '', text: 'Notifications are blocked. Allow them in your browser / phone settings for this site.' }); return; }
+      const reg = await navigator.serviceWorker.ready;
+      const key = Uint8Array.from(atob(VAPID_PUBLIC_KEY.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+      const r = await fetch(API_BASE + '/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'subscribe', name: me, subscription: sub.toJSON() }) });
+      if (!r.ok) throw new Error(await r.text());
+      try { localStorage.setItem('atom-push-name', me); } catch (e) {}
+      this.setState({ pushOn: true });
+      this.saved(me, 'Phone notifications on for this device.');
+    } catch (e) { this.showToast({ from: '⚠ Couldn\'t turn on', verb: '', prospectBrand: '', text: String(e.message || e).slice(0, 140) }); }
+  };
+  pushNotify = (names, title, body, prospectId) => {
+    const to = (names || []).filter(n => n && !sameName(n, this.state.viewerName));
+    if (!to.length || BACKEND !== 'neon') return;
+    fetch(API_BASE + '/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'send', to, title, body, url: '/?p=' + encodeURIComponent(prospectId || '') }) })
+      .then(r => r.json()).then(j => {
+        const sent = (j && j.sent) || 0;
+        setTimeout(() => this.showToast(sent
+          ? { from: '🔔 Notified', verb: '', prospectBrand: to.join(', '), text: 'Phone notification sent.' }
+          : { from: 'No phone alert', verb: 'for', prospectBrand: to.join(', '), text: 'They haven\'t turned on phone notifications yet (More → Turn on phone notifications).' }), 1800);
+      }).catch(() => {});
+  };
   enableAlerts = () => {
     if (typeof Notification === 'undefined') return;
     try { Promise.resolve(Notification.requestPermission()).then(p => this.setState({ alertPermission: p })).catch(() => this.setState({ alertPermission: 'denied' })); } catch (e) {}
@@ -1622,6 +1662,7 @@ class Component extends DCLogic {
     const ns = to.map((name, i) => ({ id: now + '-' + i + '-' + Math.random().toString(36).slice(2, 7), kind: 'assign', to: name, from: me, prospectId: p.id, prospectBrand: p.brand, text: extra || ('You are on ' + p.brand + '.'), ts: now, read: false }));
     ns.forEach(n => this._seen && this._seen.add(n.id));
     this.setState(s => ({ notifications: [...ns, ...s.notifications] }));
+    this.pushNotify(to, me + ' assigned you ' + p.brand, p.brief || ('You are on ' + p.brand + '.'), p.id);
     this.sendMail(to, me + ' assigned you ' + p.brand, me + ' assigned you the prospect "' + p.brand + '" on Work in Prospects.' + (p.brief ? '\n\nBrief: ' + p.brief : ''));
   };
   changeAssignee = (p, value) => {
@@ -1747,6 +1788,7 @@ class Component extends DCLogic {
       people: tagged.reduce((acc, t) => acc.some(a => sameName(a.name, t)) ? acc : [...acc, { name: t, email: '' }], s.people),
       newUpdateText: ''
     }));
+    this.pushNotify(tagged, me + ' tagged you · ' + (prospect ? prospect.brand : 'Prospect'), text.slice(0, 140), id);
     if (this.state.emailTagged && tagged.length) {
       const brand = prospect ? prospect.brand : 'a prospect';
       this.sendMail(tagged, me + ' tagged you on ' + brand, me + ' wrote on "' + brand + '":\n\n' + text);
@@ -1944,6 +1986,8 @@ class Component extends DCLogic {
       toggleNotifs: this.toggleNotifs,
       markAllRead: this.markAllRead,
       canEnableAlerts: s.alertPermission === 'default',
+      canEnablePush: !s.pushOn,
+      pushBtnLabel: 'Turn on phone notifications',
       enableAlerts: this.enableAlerts,
       viewerFirst: (s.viewerName || 'you').split(' ')[0],
       registerViewer: this.registerViewer,
