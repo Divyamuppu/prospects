@@ -1982,7 +1982,18 @@ class Component extends DCLogic {
     this.saved(n, 'Added to the team' + (em ? ' with ' + em : '') + '.');
     this.setState(s => ({ newPerson: { name: '', email: '' }, people: s.people.some(p => sameName(p.name, n)) ? s.people.map(p => sameName(p.name, n) ? { ...p, email: em || p.email } : p) : [...s.people, { name: n, email: em }] }));
   };
-  removePerson = (name) => { if (this.state.isMaster && window.confirm('Remove ' + name + ' from the team?')) this.setState(s => ({ people: s.people.filter(p => !sameName(p.name, name)) })); };
+  removePerson = (name) => {
+    if (!this.state.isMaster || !window.confirm('Remove ' + name + ' from the team? They will also be unassigned from all prospects.')) return;
+    const now = Date.now();
+    const strip = (str) => { const left = splitNames(str).filter(x => !sameName(x, name) && !x.split(/\s+/).some(w => sameName(w, name))); return left.join(', '); };
+    this.setState(s => ({
+      people: s.people.filter(p => !sameName(p.name, name) && !String(p.name).split(/\s+/).some(w => sameName(w, name))),
+      emailDrafts: Object.fromEntries(Object.entries(s.emailDrafts || {}).filter(([k]) => !sameName(k, name))),
+      nameDrafts: Object.fromEntries(Object.entries(s.nameDrafts || {}).filter(([k]) => !sameName(k, name))),
+      prospects: s.prospects.map(p => { const na = strip(p.assignee || ''); return na === (p.assignee || '') ? p : { ...p, assignee: na, _u: now }; })
+    }));
+    this.showToast && this.showToast({ from: 'Removed', verb: '', prospectBrand: name, text: 'Removed from team and unassigned.' });
+  };
   setPersonEmail = (name, email) => this.setState(s => ({ people: s.people.some(p => sameName(p.name, name)) ? s.people.map(p => sameName(p.name, name) ? { ...p, email } : p) : [...s.people, { name, email }] }));
   setNewDeliverable = (e) => this.setState({ newDeliverable: e.target.value });
   deliverableKey = (e) => { if (e.key === 'Enter') this.addDeliverable(); };
